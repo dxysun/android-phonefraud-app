@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:title="http://schemas.android.com/apk/res-auto"
+    tools:context="com.dxy.phonefraud.PhoneActivity">
+    <com.dxy.phonefraud.library.TitleView
+        android:layout_width="match_parent"
+        android:background="#0093fe"
+        title:left_image="@mipmap/back_normal"
+        title:title_name="@string/fraud_phone"
+        title:title_text_color="@android:color/white"
+
+        title:title_text_size="17sp"
+        title:small_text_size="@dimen/title_text_small_size"
+
+        android:layout_height="50dp"
+        android:clickable="true" />
+    <RadioGroup
+        android:id="@+id/radiogroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="60dp">
+        <RadioButton
+            android:id="@+id/fraud_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fraud_phone"
+            android:checked="true"
+            style="@style/style_radiobutton"/>
+        <RadioButton
+        android:id="@+id/normal_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/normal_phone"
+        style="@style/style_radiobutton"/>
+        <RadioButton
+            android:id="@+id/record_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/record_phone"
+            style="@style/style_radiobutton"/>
+
+    </RadioGroup>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/radiogroup">
+    </android.support.v4.view.ViewPager>
+</RelativeLayout>
