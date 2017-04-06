@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.dxy.phonefraud.R;
 
@@ -18,7 +19,7 @@ import com.dxy.phonefraud.R;
  * Use the {@link NormalSmsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NormalSmsFragment extends Fragment {
+public class NormalSmsFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -67,6 +68,9 @@ public class NormalSmsFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_normal_sms, container, false);
     }
+
+
+
 
    // TODO: Rename method, update argument and hook method into UI event
  /*    public void onButtonPressed(Uri uri) {

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.dxy.phonefraud.R;
@@ -22,8 +23,7 @@ public class SmsAdapter extends BaseAdapter {
 
     private Context context;
     private ViewHolder vh;
-    private  final int TYPE1=0;//声明常量大写
-    private  final int TYPE2=1 ;
+
     private static HashMap<Integer, Boolean> isSelectedMap;// 用来控制CheckBox的选中状况
     private static HashMap<Integer, Integer> isvisibleMap;// 用来控制CheckBox的显示状况
     private List<SmsData> list;
@@ -37,6 +37,23 @@ public class SmsAdapter extends BaseAdapter {
         this.list = list;
         this.activity = fragmentActivity;
         inflater = (LayoutInflater) fragmentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        isSelectedMap = new HashMap<Integer, Boolean>();
+        isvisibleMap = new HashMap<Integer, Integer>();
+        initDate();
+    }
+    // 初始化isSelectedMap的数据
+    private void initDate() {
+        for (int i = 0; i < list.size(); i++) {
+            getIsSelectedMap().put(i, false);
+            getIsvisibleMap().put(i, CheckBox.INVISIBLE);
+        }
+    }
+    public static HashMap<Integer, Boolean> getIsSelectedMap() {
+        return isSelectedMap;
+    }
+
+    public static HashMap<Integer, Integer> getIsvisibleMap() {
+        return isvisibleMap;
     }
 
     @Override
@@ -67,7 +84,14 @@ public class SmsAdapter extends BaseAdapter {
             vh.smsnumber = (TextView)view.findViewById(R.id.smsnumber);
             vh.smstime = (TextView)view.findViewById(R.id.smstime);
             vh.smscontent = (TextView)view.findViewById(R.id.smscontent);
+            vh.checkBox = (CheckBox)view.findViewById(R.id.checkBox);
             view.setTag(vh);
+        }
+        else
+        {
+            vh=(ViewHolder)view.getTag();
+            vh.checkBox.setChecked(getIsSelectedMap().get(position));
+            vh.checkBox.setVisibility(getIsvisibleMap().get(position));
         }
 
         SmsData sdata = list.get(position);
@@ -82,9 +106,10 @@ public class SmsAdapter extends BaseAdapter {
         return view;
     }
 
-    class ViewHolder {
-        TextView smsnumber;
-        TextView smstime;
-        TextView smscontent;
+    public class ViewHolder {
+        public TextView smsnumber;
+        public TextView smstime;
+        public TextView smscontent;
+        public CheckBox checkBox;
     }
 }

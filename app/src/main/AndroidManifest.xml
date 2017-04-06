@@ -28,7 +28,12 @@
         <activity android:name=".SmsActivity" />
         <activity android:name=".IntentActivity" />
         <activity android:name=".ListViewActivity" />
-        <activity android:name=".SetActivity"></activity>
+        <activity android:name=".SetActivity" />
+        <activity android:name=".FraudPhoneDetialActivity" />
+        <activity android:name=".FraudSmsDetialActivity" />
+        <activity android:name=".NormalPhoneDetialActivity" />
+        <activity android:name=".NormalSmsDetialActivity" />
+        <activity android:name=".RecordPhoneDetielActivity"></activity>
     </application>
 
 </manifest>

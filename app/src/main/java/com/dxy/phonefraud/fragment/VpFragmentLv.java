@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.dxy.phonefraud.IntentActivity;
+import com.dxy.phonefraud.NormalSmsDetialActivity;
 import com.dxy.phonefraud.R;
 import com.dxy.phonefraud.adapter.ListviewLongCheckedDdeleteDemoAda;
 import com.dxy.phonefraud.adapter.MyListAdapter;
@@ -34,9 +35,10 @@ public class VpFragmentLv extends Fragment implements AdapterView.OnItemClickLis
     private LayoutInflater inflater;
 
     private MyListAdapter ma;
+    private List<News> list;
+
     private Dialog alertDialog;
     private RelativeLayout longlayout;
-    private List<News> list;
     private boolean islong;
     public VpFragmentLv() {
         // Required empty public constructor
@@ -175,13 +177,15 @@ public class VpFragmentLv extends Fragment implements AdapterView.OnItemClickLis
         }
         else{
 
-            News news = list.get(arg2);
-            Intent intent = new Intent(getActivity(), IntentActivity.class);
+      /*      News news = list.get(arg2);
+
             intent.putExtra("obj", news);
             Bundle b1 = new Bundle();
             b1.putString("arg1", "今天七月七");
             intent.putExtra("bundle", b1);
 
+            startActivity(intent);*/
+            Intent intent = new Intent(getActivity(), NormalSmsDetialActivity.class);
             startActivity(intent);
 
         }
