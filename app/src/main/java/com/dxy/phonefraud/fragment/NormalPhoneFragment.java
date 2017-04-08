@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,15 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.dxy.phonefraud.DataSource.GetCall;
 import com.dxy.phonefraud.FraudSmsDetialActivity;
 import com.dxy.phonefraud.NormalPhoneDetialActivity;
 import com.dxy.phonefraud.R;
+import com.dxy.phonefraud.adapter.NormalPhoneAdapter;
 import com.dxy.phonefraud.adapter.PhoneAdapter;
 import com.dxy.phonefraud.adapter.SmsAdapter;
 import com.dxy.phonefraud.entity.PhoneData;
+import com.dxy.phonefraud.entity.SmsData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +37,7 @@ import java.util.List;
  */
 public class NormalPhoneFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener,View.OnClickListener{
 
-    private PhoneAdapter phoneAdapter;
+    private NormalPhoneAdapter phoneAdapter;
     private List<PhoneData> list;
 
     private Dialog alertDialog;
@@ -68,11 +72,14 @@ public class NormalPhoneFragment extends Fragment implements AdapterView.OnItemC
 
 //        TextView tv=(TextView)getView().findViewById(R.id.tv);
         ListView lv = (ListView) getView().findViewById(R.id.normalphonelist);
-        list = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
+        list = GetCall.GetCallsInPhone(getActivity());
+
+    /*    list = new ArrayList<>();
+        for (int i = 0; i < 50; i++) {
             list.add(new PhoneData("888888" + i, "李四", "2017-04-"+ i,1));
-        }
-        phoneAdapter = new PhoneAdapter(getActivity(),list);
+        }*/
+        Log.i("phoneFraud-phone  list"," "+list.size());
+        phoneAdapter = new NormalPhoneAdapter(getActivity(),list);
         lv.setAdapter(phoneAdapter);
 
         lv.setOnItemClickListener(this);
@@ -110,7 +117,7 @@ public class NormalPhoneFragment extends Fragment implements AdapterView.OnItemC
                     phoneAdapter.getIsSelectedMap().put(i,
                             false);
                     phoneAdapter.getIsvisibleMap().put(i,
-                            CheckBox.INVISIBLE);
+                            CheckBox.GONE);
                 }
 
                 phoneAdapter.notifyDataSetChanged();
@@ -131,6 +138,7 @@ public class NormalPhoneFragment extends Fragment implements AdapterView.OnItemC
                                         for (int i = len - 1; i >= 0; i--) {
                                             Boolean value = phoneAdapter.getIsSelectedMap().get(i);
                                             if (value) {
+                                                GetCall.DeleteCallById(getActivity(),list.get(i).getId());
                                                 list.remove(i);
                                                 phoneAdapter.getIsSelectedMap().put(i,
                                                         false);
@@ -165,7 +173,7 @@ public class NormalPhoneFragment extends Fragment implements AdapterView.OnItemC
         if(islong){
             switch (id) {
                 case R.id.normalphonelist:
-                    PhoneAdapter.ViewHolder holder = (PhoneAdapter.ViewHolder) arg1.getTag();
+                    NormalPhoneAdapter.ViewHolder holder = (NormalPhoneAdapter.ViewHolder) arg1.getTag();
                     // 改变CheckBox的状态
                     holder.checkBox.toggle();
                     phoneAdapter.getIsSelectedMap().put(arg2, true);
@@ -176,7 +184,16 @@ public class NormalPhoneFragment extends Fragment implements AdapterView.OnItemC
             }
         }
         else{
+
             Intent intent = new Intent(getActivity(), NormalPhoneDetialActivity.class);
+            Bundle bundle = new Bundle();
+
+            PhoneData phone = list.get(arg2);
+            Log.i("phonefraud-phone", "send  " + phone.getPhonenumber());
+            //    intent.putExtra("sms", sms);
+
+            bundle.putParcelable("phone", phone);
+            intent.putExtras(bundle);
             startActivity(intent);
 
         }

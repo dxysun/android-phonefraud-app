@@ -1,6 +1,11 @@
 package com.dxy.phonefraud;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
+import android.provider.CallLog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,10 +13,24 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.dxy.phonefraud.DataSource.CallLogObserver;
+import com.dxy.phonefraud.DataSource.SmsObserver;
+
 public class Main2Activity extends AppCompatActivity implements View.OnClickListener {
     private ImageView iv_setting;
     private ImageButton phone_fraud;
     private ImageButton sms_fraud;
+
+    private CallLogObserver callLogObserver;
+    private SmsObserver smsContentObserver;
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            String msgBody = (String) msg.obj;
+            Log.i("ListenSmsPhone","msg " + msg.obj + ":" + msgBody);
+       //     tv_info.setText(msg.obj + ":" + msgBody);
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,6 +41,12 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         iv_setting.setOnClickListener(this);
         phone_fraud.setOnClickListener(this);
         sms_fraud.setOnClickListener(this);
+
+ /*       smsContentObserver = new SmsObserver(mHandler, this);
+        getContentResolver().registerContentObserver(Uri.parse("content://sms"), true, smsContentObserver);
+        callLogObserver = new CallLogObserver(mHandler, this);
+        getContentResolver().registerContentObserver(CallLog.Calls.CONTENT_URI, true, callLogObserver);//等价于【Uri.parse("content://call_log/calls")】
+*/
     }
     //用Activity实现OnClickListener接口
     @Override

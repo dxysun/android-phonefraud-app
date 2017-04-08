@@ -17,10 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by dongx on 2017/4/5.
+ * Created by dongx on 2017/4/7.
  */
-public class SmsAdapter extends BaseAdapter {
-
+public class FraudSmsAdapter extends BaseAdapter {
     private Context context;
     private ViewHolder vh;
 
@@ -32,7 +31,7 @@ public class SmsAdapter extends BaseAdapter {
 
     FragmentActivity activity;
 
-    public SmsAdapter(FragmentActivity fragmentActivity, List<SmsData> list) {
+    public FraudSmsAdapter(FragmentActivity fragmentActivity, List<SmsData> list) {
         // TODO Auto-generated constructor stub
         this.list = list;
         this.activity = fragmentActivity;

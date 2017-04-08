@@ -176,17 +176,17 @@ public class VpFragmentLv extends Fragment implements AdapterView.OnItemClickLis
             }
         }
         else{
-
-      /*      News news = list.get(arg2);
+            Intent intent=new Intent(getActivity(), IntentActivity.class);
+            News news = list.get(arg2);
 
             intent.putExtra("obj", news);
             Bundle b1 = new Bundle();
             b1.putString("arg1", "今天七月七");
             intent.putExtra("bundle", b1);
 
-            startActivity(intent);*/
-            Intent intent = new Intent(getActivity(), NormalSmsDetialActivity.class);
             startActivity(intent);
+       //     Intent intent = new Intent(getActivity(), NormalSmsDetialActivity.class);
+      //      startActivity(intent);
 
         }
 

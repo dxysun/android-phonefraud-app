@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import com.dxy.phonefraud.FraudPhoneDetialActivity;
 import com.dxy.phonefraud.NormalSmsDetialActivity;
 import com.dxy.phonefraud.R;
+import com.dxy.phonefraud.adapter.FraudPhoneAdapter;
 import com.dxy.phonefraud.adapter.MyListAdapter;
 import com.dxy.phonefraud.adapter.PhoneAdapter;
 import com.dxy.phonefraud.entity.PhoneData;
@@ -33,7 +34,7 @@ import java.util.List;
  */
 public class FraudPhoneFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener,View.OnClickListener {
     private ListView listView;
-    private PhoneAdapter phoneAdapter;
+    private FraudPhoneAdapter phoneAdapter;
     private List<PhoneData> list;
 
     private Dialog alertDialog;
@@ -69,9 +70,9 @@ public class FraudPhoneFragment extends Fragment implements AdapterView.OnItemCl
         ListView lv = (ListView) getView().findViewById(R.id.fraudphonelist);
         list = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            list.add(new PhoneData("999999" + i, "张三", "2017-04-"+ i,0));
+            list.add(new PhoneData("110","999999" + i, "张三", "2017-04-"+ i,0));
         }
-        phoneAdapter = new PhoneAdapter(getActivity(),list);
+        phoneAdapter = new FraudPhoneAdapter(getActivity(),list);
         lv.setAdapter(phoneAdapter);
 
         lv.setOnItemClickListener(this);
@@ -164,7 +165,7 @@ public class FraudPhoneFragment extends Fragment implements AdapterView.OnItemCl
         if(islong){
             switch (id) {
                 case R.id.fraudphonelist:
-                    PhoneAdapter.ViewHolder holder = (PhoneAdapter.ViewHolder) arg1.getTag();
+                    FraudPhoneAdapter.ViewHolder holder = (FraudPhoneAdapter.ViewHolder) arg1.getTag();
                     // 改变CheckBox的状态
                     holder.checkBox.toggle();
                     phoneAdapter.getIsSelectedMap().put(arg2, true);

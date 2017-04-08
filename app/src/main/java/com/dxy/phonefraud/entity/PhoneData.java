@@ -7,19 +7,33 @@ import android.os.Parcelable;
  * Created by dongx on 2017/4/5.
  */
 public class PhoneData implements Parcelable {
+    private String id;
     private String phonenumber;
     private String calltime;
     private String phonename;
     private String recordpath;
     private int type; //0-诈骗电话 1-正常电话  2-不确定
-    private boolean isrecord;  //false 未录音 true 录音
+    private int isrecord;  //0 未录音 1 录音
     private int listtype; //0-诈骗电话 1-正常电话  2-电话录音
-    public PhoneData(String phonenumber,String phonename,String calltime,int listtype){
+
+    public PhoneData(){
+    }
+    public PhoneData(String id,String phonenumber,String phonename,String calltime,int listtype){
+        this.id = id;
         this.calltime = calltime;
         this.phonename = phonename;
         this.phonenumber = phonenumber;
         this.listtype = listtype;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getPhonenumber(){
         return phonenumber;
     }
@@ -32,7 +46,7 @@ public class PhoneData implements Parcelable {
     public int getType(){
         return type;
     }
-    public boolean getIsrecord(){
+    public int getIsrecord(){
         return isrecord;
     }
     public  int getListtype(){
@@ -56,7 +70,7 @@ public class PhoneData implements Parcelable {
     public void setRecordpath(String path){
         recordpath = path;
     }
-    public void setIsrecord(boolean b){
+    public void setIsrecord(int b){
         isrecord = b;
     }
     public void setListtype(int listtype){
@@ -67,6 +81,10 @@ public class PhoneData implements Parcelable {
         phonenumber = in.readString();
         calltime = in.readString();
         phonename = in.readString();
+        recordpath = in.readString();
+        type = in.readInt();
+        listtype = in.readInt();
+        isrecord = in.readInt();
     }
     public static final Creator<PhoneData> CREATOR = new Creator<PhoneData>() {
         @Override
@@ -86,6 +104,14 @@ public class PhoneData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(phonenumber);
+        parcel.writeString(calltime);
+        parcel.writeInt(type);
+        parcel.writeString(phonename);
+        parcel.writeString(recordpath);
+        parcel.writeInt(listtype);
+        parcel.writeInt(isrecord);
+        parcel.writeString(id);
 
     }
 }

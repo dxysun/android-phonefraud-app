@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,12 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.dxy.phonefraud.DataSource.GetSms;
+import com.dxy.phonefraud.DataSource.SmsReadDao;
 import com.dxy.phonefraud.FraudPhoneDetialActivity;
 import com.dxy.phonefraud.R;
 import com.dxy.phonefraud.FraudSmsDetialActivity;
+import com.dxy.phonefraud.adapter.FraudSmsAdapter;
 import com.dxy.phonefraud.adapter.PhoneAdapter;
 import com.dxy.phonefraud.adapter.SmsAdapter;
 import com.dxy.phonefraud.entity.SmsData;
@@ -26,14 +30,6 @@ import com.dxy.phonefraud.entity.SmsData;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FraudSmsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FraudSmsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener,View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -45,7 +41,7 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
     private RelativeLayout longlayout;
     private boolean islong;
 
-    private SmsAdapter smsAdapter;
+    private FraudSmsAdapter smsAdapter;
     private List<SmsData> list;
 
     // TODO: Rename and change types of parameters
@@ -136,14 +132,16 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
 
 //        TextView tv=(TextView)getView().findViewById(R.id.tv);
         ListView lv = (ListView) getView().findViewById(R.id.fraudsmslist);
-        list = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
+  /*      list = new ArrayList<>();
+        for (int i = 0; i < 200; i++) {
             String content = "通过谈话得知该生遇到的问题是对学习逐渐失去兴趣，并把注意力、精力转移到了电子游戏上。" +
                     "该生以前学习成绩算不上优秀但也不差，曾经努力学习过一段时间但由于取得的效果不明显，" +
                     "于是开始逐渐丧失对学习的兴趣和热情，甚至产生负面的消极的情绪，试图通过电子游戏来转移失落感。";
             list.add(new SmsData("66666" + i,"2017-04-"+i,content,0));
-        }
-        smsAdapter = new SmsAdapter(getActivity(),list);
+        }*/
+        list = GetSms.getSmsInPhone(getActivity());
+        Log.i("phoneFraud-phone  list"," "+list.size());
+        smsAdapter = new FraudSmsAdapter(getActivity(),list);
         lv.setAdapter(smsAdapter);
 
         lv.setOnItemClickListener(this);
@@ -181,7 +179,7 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
                     smsAdapter.getIsSelectedMap().put(i,
                             false);
                     smsAdapter.getIsvisibleMap().put(i,
-                            CheckBox.INVISIBLE);
+                            CheckBox.GONE);
                 }
 
                 smsAdapter.notifyDataSetChanged();
@@ -202,6 +200,7 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
                                         for (int i = len - 1; i >= 0; i--) {
                                             Boolean value = smsAdapter.getIsSelectedMap().get(i);
                                             if (value) {
+                                                SmsReadDao.deleteOneSendSms(getActivity(),list.get(i).getId());
                                                 list.remove(i);
                                                 smsAdapter.getIsSelectedMap().put(i,
                                                         false);
@@ -236,7 +235,7 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
         if(islong){
             switch (id) {
                 case R.id.fraudsmslist:
-                    SmsAdapter.ViewHolder holder = (SmsAdapter.ViewHolder) arg1.getTag();
+                    FraudSmsAdapter.ViewHolder holder = (FraudSmsAdapter.ViewHolder) arg1.getTag();
                     // 改变CheckBox的状态
                     holder.checkBox.toggle();
                     smsAdapter.getIsSelectedMap().put(arg2, true);
@@ -247,7 +246,23 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
             }
         }
         else{
+
+            /*      News news = list.get(arg2);
+
+            intent.putExtra("obj", news);
+            Bundle b1 = new Bundle();
+            b1.putString("arg1", "今天七月七");
+            intent.putExtra("bundle", b1);
+
+            startActivity(intent);*/
             Intent intent = new Intent(getActivity(), FraudSmsDetialActivity.class);
+            Bundle bundle = new Bundle();
+
+            SmsData sms = list.get(arg2);
+
+        //    intent.putExtra("sms", sms);
+            bundle.putParcelable("sms", sms);
+            intent.putExtras(bundle);
             startActivity(intent);
 
         }

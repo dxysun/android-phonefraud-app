@@ -12,16 +12,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dxy.phonefraud.R;
-import com.dxy.phonefraud.entity.News;
 import com.dxy.phonefraud.entity.PhoneData;
 
 import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by dongx on 2017/4/5.
+ * Created by dongx on 2017/4/7.
  */
-public class PhoneAdapter extends BaseAdapter {
+public class RecordPhoneAdapter  extends BaseAdapter {
     private Context context;
     private ViewHolder vh;
 
@@ -33,7 +32,7 @@ public class PhoneAdapter extends BaseAdapter {
 
     FragmentActivity activity;
 
-    public PhoneAdapter(FragmentActivity fragmentActivity, List<PhoneData> list) {
+    public RecordPhoneAdapter(FragmentActivity fragmentActivity, List<PhoneData> list) {
         // TODO Auto-generated constructor stub
         this.list = list;
         this.activity = fragmentActivity;
@@ -107,64 +106,6 @@ public class PhoneAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup arg2) {
         // TODO Auto-generated method stub
         PhoneData pdata = list.get(position);
-        int listtype = pdata.getListtype();
-        if(listtype != 2){
-        //    int type = pdata.getType();
-              if(listtype == 0){
-                  if (view == null) {
-                      vh = new ViewHolder();
-                      view = inflater.inflate(R.layout.fraud_phone_item, null);
-                      vh.fraudphone = (TextView)view.findViewById(R.id.phonenumber);
-                      vh.phonetime = (TextView)view.findViewById(R.id.phonetime);
-                      vh.checkBox = (CheckBox)view.findViewById(R.id.checkBox);
-                      view.setTag(vh);
-                  }
-                  else
-                  {
-                      vh=(ViewHolder)view.getTag();
-                      vh.checkBox.setChecked(getIsSelectedMap().get(position));
-                      vh.checkBox.setVisibility(getIsvisibleMap().get(position));
-                  }
-                  if(pdata.getPhonename() != null)
-                  {
-                      vh.fraudphone.setText(pdata.getPhonename() +"  "+pdata.getPhonenumber());
-                  }
-                  else
-                  {
-                      vh.fraudphone.setText(pdata.getPhonenumber());
-                  }
-                  vh.phonetime.setText(pdata.getCalltime());
-              }
-            else
-              {
-                  if (view == null) {
-                      vh = new ViewHolder();
-                      view = inflater.inflate(R.layout.fraud_phone_item, null);
-                      vh.fraudphone = (TextView)view.findViewById(R.id.phonenumber);
-                      vh.phonetime = (TextView)view.findViewById(R.id.phonetime);
-                      vh.checkBox = (CheckBox)view.findViewById(R.id.checkBox);
-                      view.setTag(vh);
-                  }
-                  else
-                  {
-                      vh=(ViewHolder)view.getTag();
-                      vh.checkBox.setChecked(getIsSelectedMap().get(position));
-                      vh.checkBox.setVisibility(getIsvisibleMap().get(position));
-                  }
-                      vh.fraudphone.setTextColor(Color.GRAY);
-                  if(pdata.getPhonename() != null)
-                  {
-                      vh.fraudphone.setText(pdata.getPhonename() +"  "+pdata.getPhonenumber());
-                  }
-                  else
-                  {
-                      vh.fraudphone.setText(pdata.getPhonenumber());
-                  }
-                  vh.phonetime.setText(pdata.getCalltime());
-              }
-        }
-        else
-        {
             if (view == null) {
                 vh = new ViewHolder();
                 view = inflater.inflate(R.layout.record_phone_item, null);
@@ -190,7 +131,6 @@ public class PhoneAdapter extends BaseAdapter {
             }
 
             vh.phonetime.setText(pdata.getCalltime());
-        }
 
 
         return view;

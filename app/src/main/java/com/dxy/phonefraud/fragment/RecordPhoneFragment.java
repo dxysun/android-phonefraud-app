@@ -21,6 +21,7 @@ import com.dxy.phonefraud.NormalPhoneDetialActivity;
 import com.dxy.phonefraud.R;
 import com.dxy.phonefraud.RecordPhoneDetielActivity;
 import com.dxy.phonefraud.adapter.PhoneAdapter;
+import com.dxy.phonefraud.adapter.RecordPhoneAdapter;
 import com.dxy.phonefraud.entity.PhoneData;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ import java.util.List;
  */
 public class RecordPhoneFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener,View.OnClickListener{
 
-    private PhoneAdapter phoneAdapter;
+    private RecordPhoneAdapter phoneAdapter;
     private List<PhoneData> list;
 
     private Dialog alertDialog;
@@ -68,9 +69,9 @@ public class RecordPhoneFragment extends Fragment implements AdapterView.OnItemC
         ListView lv = (ListView) getView().findViewById(R.id.recordphonelist);
         list = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            list.add(new PhoneData("888888" + i, "王五", "2017-04-"+ i,2));
+            list.add(new PhoneData("110","888888" + i, "王五", "2017-04-"+ i,2));
         }
-        phoneAdapter = new PhoneAdapter(getActivity(),list);
+        phoneAdapter = new RecordPhoneAdapter(getActivity(),list);
         lv.setAdapter(phoneAdapter);
 
         lv.setOnItemClickListener(this);
@@ -163,7 +164,7 @@ public class RecordPhoneFragment extends Fragment implements AdapterView.OnItemC
         if(islong){
             switch (id) {
                 case R.id.recordphonelist:
-                    PhoneAdapter.ViewHolder holder = (PhoneAdapter.ViewHolder) arg1.getTag();
+                    RecordPhoneAdapter.ViewHolder holder = (RecordPhoneAdapter.ViewHolder) arg1.getTag();
                     // 改变CheckBox的状态
                     holder.checkBox.toggle();
                     phoneAdapter.getIsSelectedMap().put(arg2, true);
