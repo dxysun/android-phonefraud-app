@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="张三 12345678909"
-            android:id="@+id/textView3"
+            android:id="@+id/fraud_info"
             android:layout_weight="6"
             android:textSize="20dp"
             android:background="#ffffff"
@@ -79,7 +79,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="2017-06-06 14:00"
-            android:id="@+id/textView5"
+            android:id="@+id/call_time"
             android:layout_weight="6"
             android:textSize="20dp"
             android:background="#ffffff"
@@ -98,7 +98,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="删除"
-            android:id="@+id/button"
+            android:id="@+id/delete_phone"
             android:layout_gravity="bottom"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
@@ -108,11 +108,11 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="标记为正常短信"
-            android:id="@+id/button2"
+            android:text="标记为正常电话"
+            android:id="@+id/sign_normal"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_above="@+id/button"
+            android:layout_above="@+id/delete_phone"
             />
 
 

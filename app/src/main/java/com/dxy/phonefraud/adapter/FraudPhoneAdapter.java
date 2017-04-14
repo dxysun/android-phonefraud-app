@@ -14,6 +14,9 @@ import android.widget.TextView;
 import com.dxy.phonefraud.R;
 import com.dxy.phonefraud.entity.PhoneData;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -74,34 +77,6 @@ public class FraudPhoneAdapter extends BaseAdapter {
         return isvisibleMap;
     }
 
-    public void initItemView(int position,View view,PhoneData pdata,int listtype){
-        if (view == null) {
-            vh = new ViewHolder();
-            view = inflater.inflate(R.layout.fraud_phone_item, null);
-            vh.fraudphone = (TextView)view.findViewById(R.id.phonenumber);
-            vh.phonetime = (TextView)view.findViewById(R.id.phonetime);
-            vh.checkBox = (CheckBox)view.findViewById(R.id.checkBox);
-            view.setTag(vh);
-        }
-        else
-        {
-            vh=(ViewHolder)view.getTag();
-            vh.checkBox.setChecked(getIsSelectedMap().get(position));
-            vh.checkBox.setVisibility(getIsvisibleMap().get(position));
-        }
-        if(listtype == 1){
-            vh.fraudphone.setTextColor(Color.GRAY);
-        }
-        if(pdata.getPhonename() != null)
-        {
-            vh.fraudphone.setText(pdata.getPhonename() +"  "+pdata.getPhonenumber());
-        }
-        else
-        {
-            vh.fraudphone.setText(pdata.getPhonenumber());
-        }
-        vh.phonetime.setText(pdata.getCalltime());
-    }
     @Override
     public View getView(int position, View view, ViewGroup arg2) {
         // TODO Auto-generated method stub
@@ -128,13 +103,32 @@ public class FraudPhoneAdapter extends BaseAdapter {
                 {
                     vh.fraudphone.setText(pdata.getPhonenumber());
                 }
-                vh.phonetime.setText(pdata.getCalltime());
+                vh.phonetime.setText(pdata.getCalltime()+"       最近呼入");
 
 
 
         return view;
     }
-
+    public void add(PhoneData data) {
+        if (list == null) {
+            list = new ArrayList<>();
+        }
+        list.add(data);
+        Collections.sort(list, new Comparator<PhoneData>() {
+            public int compare(PhoneData arg0, PhoneData arg1) {
+                return arg1.getCalltime().compareTo(arg0.getCalltime());
+            }
+        });
+        initDate();
+        notifyDataSetChanged();
+    }
+    public void remove(int position) {
+        if(list != null) {
+            list.remove(position);
+        }
+        initDate();
+        notifyDataSetChanged();
+    }
     public class ViewHolder {
         public TextView fraudphone;
         public TextView phonetime;

@@ -13,8 +13,8 @@ public class PhoneData implements Parcelable {
     private String phonename;
     private String recordpath;
     private int type; //0-诈骗电话 1-正常电话  2-不确定
-    private int isrecord;  //0 未录音 1 录音
     private int listtype; //0-诈骗电话 1-正常电话  2-电话录音
+    private int isrecord;  //0 未录音 1 录音
 
     public PhoneData(){
     }
@@ -78,6 +78,7 @@ public class PhoneData implements Parcelable {
     }
 
     protected PhoneData(Parcel in) {
+        id = in.readString();
         phonenumber = in.readString();
         calltime = in.readString();
         phonename = in.readString();
@@ -104,14 +105,14 @@ public class PhoneData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
         parcel.writeString(phonenumber);
         parcel.writeString(calltime);
-        parcel.writeInt(type);
         parcel.writeString(phonename);
         parcel.writeString(recordpath);
+        parcel.writeInt(type);
         parcel.writeInt(listtype);
         parcel.writeInt(isrecord);
-        parcel.writeString(id);
 
     }
 }

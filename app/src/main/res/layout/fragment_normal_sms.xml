@@ -5,10 +5,10 @@
     tools:context="com.dxy.phonefraud.fragment.NormalSmsFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/normal_sms"
-        android:layout_centerInParent="true"/>
+    <ListView
+        android:id="@+id/normalsmslist"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        />
     <include layout="@layout/bottom_button"/>
 </FrameLayout>

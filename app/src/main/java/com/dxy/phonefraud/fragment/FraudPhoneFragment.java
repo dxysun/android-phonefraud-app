@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +18,14 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.dxy.phonefraud.BaseApplication;
 import com.dxy.phonefraud.FraudPhoneDetialActivity;
-import com.dxy.phonefraud.NormalSmsDetialActivity;
 import com.dxy.phonefraud.R;
 import com.dxy.phonefraud.adapter.FraudPhoneAdapter;
-import com.dxy.phonefraud.adapter.MyListAdapter;
-import com.dxy.phonefraud.adapter.PhoneAdapter;
 import com.dxy.phonefraud.entity.PhoneData;
+import com.dxy.phonefraud.greendao.DaoSession;
+import com.dxy.phonefraud.greendao.FraudPhone;
+import com.dxy.phonefraud.greendao.FraudPhoneDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,9 @@ public class FraudPhoneFragment extends Fragment implements AdapterView.OnItemCl
     private Dialog alertDialog;
     private RelativeLayout longlayout;
     private boolean islong;
+    private DaoSession daoSession;
+    private FraudPhoneDao phoneDao;
+
     public FraudPhoneFragment() {
         // Required empty public constructor
     }
@@ -69,10 +74,24 @@ public class FraudPhoneFragment extends Fragment implements AdapterView.OnItemCl
 //        TextView tv=(TextView)getView().findViewById(R.id.tv);
         ListView lv = (ListView) getView().findViewById(R.id.fraudphonelist);
         list = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            list.add(new PhoneData("110","999999" + i, "张三", "2017-04-"+ i,0));
+    /*    daoSession = BaseApplication.getInstances().getDaoSession();
+        phoneDao = daoSession.getFraudPhoneDao();
+        List<FraudPhone> phones = phoneDao.loadAll();
+        FraudPhone p = phones.get(0);
+        list.add(new PhoneData("110",p.getPhonenumber(),p.getPhonename(), p.getCalltime(),p.getType()));*/
+        list = BaseApplication.getFraudphonelist();
+        if(list == null)
+        {
+            BaseApplication.setFraudphonelist();
+            list = BaseApplication.getFraudphonelist();
         }
+     /*   for (int i = 0; i < 10; i++) {
+            list.add(new PhoneData("110","999999" + i, "张三", "2017-04-"+ i,0));
+        }*/
+
+
         phoneAdapter = new FraudPhoneAdapter(getActivity(),list);
+        BaseApplication.setFraudphoneAdapter(phoneAdapter);
         lv.setAdapter(phoneAdapter);
 
         lv.setOnItemClickListener(this);
@@ -177,6 +196,15 @@ public class FraudPhoneFragment extends Fragment implements AdapterView.OnItemCl
         }
         else{
             Intent intent = new Intent(getActivity(), FraudPhoneDetialActivity.class);
+            Bundle bundle = new Bundle();
+
+            PhoneData phone = list.get(arg2);
+            //Log.i("phonefraud-phone", "send  " + phone.getPhonenumber());
+            //   intent.putExtra("plist", plist);
+            bundle.putInt("position",arg2);
+            bundle.putParcelable("phone", phone);
+
+            intent.putExtras(bundle);
             startActivity(intent);
 
         }

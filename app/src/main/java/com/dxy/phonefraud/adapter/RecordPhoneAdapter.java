@@ -135,7 +135,13 @@ public class RecordPhoneAdapter  extends BaseAdapter {
 
         return view;
     }
-
+    public void remove(int position) {
+        if(list != null) {
+            list.remove(position);
+        }
+        initDate();
+        notifyDataSetChanged();
+    }
     public class ViewHolder {
         public TextView fraudphone;
         public TextView phonetime;

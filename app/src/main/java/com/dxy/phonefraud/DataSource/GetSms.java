@@ -58,12 +58,20 @@ public class GetSms {
                     String strType = "";
                     if (intType == 1) {
                         strType = "receive";
-                        SmsData sms = new SmsData(id,strAddress,strDate,strbody,0);
+                        SmsData sms =null;
+                        if(strAddress.startsWith("+86"))
+                        {
+                            sms = new SmsData(id,strAddress.substring(3),strDate,strbody,1);
+                        }
+                        else
+                        {
+                            sms = new SmsData(id,strAddress,strDate,strbody,1);
+                        }
+
+                        String name = GetCall.queryNameFromContactsByNumber(context,strAddress.substring(3));
+                        if(name != null)
+                            sms.setSmsname(name);
                        smslist.add(sms);
-                    } else if (intType == 2) {
-                        strType = "send";
-                    } else {
-                        strType = "null";
                     }
 
 
@@ -78,7 +86,6 @@ public class GetSms {
 
                 if (!cur.isClosed()) {
                     cur.close();
-                    cur = null;
                 }
             } else {
                 smsBuilder.append("no result!");

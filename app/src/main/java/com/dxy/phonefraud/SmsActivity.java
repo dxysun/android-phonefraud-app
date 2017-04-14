@@ -50,8 +50,8 @@ public class SmsActivity extends AppCompatActivity implements RadioGroup.OnCheck
     }
     private void initViewPager(){
         FraudSmsFragment fraudPhoneFragment=new FraudSmsFragment();
-    //    NormalSmsFragment normalPhoneFragment=new NormalSmsFragment();
-        VpFragmentLv normalPhoneFragment = new VpFragmentLv();
+        NormalSmsFragment normalPhoneFragment=new NormalSmsFragment();
+     //   VpFragmentLv normalPhoneFragment = new VpFragmentLv();
         alFragment=new ArrayList<>();
         alFragment.add(fraudPhoneFragment);
         alFragment.add(normalPhoneFragment);

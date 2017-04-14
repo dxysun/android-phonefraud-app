@@ -13,6 +13,9 @@ import android.widget.TextView;
 import com.dxy.phonefraud.R;
 import com.dxy.phonefraud.entity.SmsData;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -96,9 +99,17 @@ public class FraudSmsAdapter extends BaseAdapter {
         SmsData sdata = list.get(position);
         int type = sdata.getType();
         if(type == 0){
-            vh.smsnumber.setTextColor(Color.RED);
+            vh.smscontent.setTextColor(Color.RED);
         }
-        vh.smsnumber.setText(sdata.getSmsnumber());
+        if(sdata.getSmsname() != null)
+        {
+            vh.smsnumber.setText(sdata.getSmsname() + "   " +sdata.getSmsnumber());
+        }
+        else
+        {
+            vh.smsnumber.setText(sdata.getSmsnumber());
+        }
+
         vh.smstime.setText(sdata.getSmstime());
         if(sdata.getSmscontent().length() >= 25)
         {
@@ -111,7 +122,26 @@ public class FraudSmsAdapter extends BaseAdapter {
 
         return view;
     }
-
+    public void add(SmsData data) {
+        if (list == null) {
+            list = new ArrayList<>();
+        }
+        list.add(data);
+        Collections.sort(list, new Comparator<SmsData>() {
+            public int compare(SmsData arg0, SmsData arg1) {
+                return arg1.getSmstime().compareTo(arg0.getSmstime());
+            }
+        });
+        initDate();
+        notifyDataSetChanged();
+    }
+    public void remove(int position) {
+        if(list != null) {
+            list.remove(position);
+        }
+        initDate();
+        notifyDataSetChanged();
+    }
     public class ViewHolder {
         public TextView smsnumber;
         public TextView smstime;

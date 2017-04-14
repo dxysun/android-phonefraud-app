@@ -12,6 +12,7 @@ public class SmsData implements Parcelable {
     private String smscontent;
     private String smstime;
     private int type;   //0-诈骗短信   1-正常短信
+    private String smsname;
 
     public SmsData(){
     }
@@ -33,6 +34,14 @@ public class SmsData implements Parcelable {
     }
     public int getType(){
         return type;
+    }
+
+    public String getSmsname() {
+        return smsname;
+    }
+
+    public void setSmsname(String smsname) {
+        this.smsname = smsname;
     }
 
     public String getId() {
@@ -61,6 +70,7 @@ public class SmsData implements Parcelable {
         smscontent = in.readString();
         smstime = in.readString();
         type = in.readInt();
+        smsname = in.readString();
     }
     public static final Creator<SmsData> CREATOR = new Creator<SmsData>() {
         @Override
@@ -84,7 +94,7 @@ public class SmsData implements Parcelable {
         parcel.writeString(smscontent);
         parcel.writeString(smstime);
         parcel.writeInt(type);
-
+        parcel.writeString(smsname);
 
     }
 

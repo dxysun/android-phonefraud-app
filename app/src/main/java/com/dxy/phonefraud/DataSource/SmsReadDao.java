@@ -55,6 +55,7 @@ public class SmsReadDao {
 
         Cursor cursor = context.getContentResolver().query(uri, projections,
                 null, null, null);
+
         Log.e("aaa", "count-- " + cursor.getCount());
         while (cursor != null && !cursor.isClosed() && cursor.moveToNext()) {
 
@@ -170,9 +171,9 @@ public class SmsReadDao {
      */
     public static void registSmsChangeListener(Context context, Handler handler) {
         // 注册短信变化的监听
-        // Uri uri = Sms.CONTENT_URI;//全部短信 Uri.parse("content://sms");
-        // Uri uri=Sms.Inbox.CONTENT_URI;//收件箱 Uri.parse("content://mms/inbox");
-        // Uri uri = Sms.Sent.CONTENT_URI;//发件箱 Uri.parse("content://mms/sent");
+        // Uri uri = FraudSms.CONTENT_URI;//全部短信 Uri.parse("content://sms");
+        // Uri uri=FraudSms.Inbox.CONTENT_URI;//收件箱 Uri.parse("content://mms/inbox");
+        // Uri uri = FraudSms.Sent.CONTENT_URI;//发件箱 Uri.parse("content://mms/sent");
         /**
          * 不幸的是，收件箱和发件箱的Uri是没用的，监听不到数据！！！
          */

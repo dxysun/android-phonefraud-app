@@ -17,15 +17,16 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.dxy.phonefraud.BaseApplication;
 import com.dxy.phonefraud.DataSource.GetSms;
 import com.dxy.phonefraud.DataSource.SmsReadDao;
-import com.dxy.phonefraud.FraudPhoneDetialActivity;
 import com.dxy.phonefraud.R;
 import com.dxy.phonefraud.FraudSmsDetialActivity;
 import com.dxy.phonefraud.adapter.FraudSmsAdapter;
-import com.dxy.phonefraud.adapter.PhoneAdapter;
-import com.dxy.phonefraud.adapter.SmsAdapter;
 import com.dxy.phonefraud.entity.SmsData;
+import com.dxy.phonefraud.greendao.DaoSession;
+import com.dxy.phonefraud.greendao.FraudSms;
+import com.dxy.phonefraud.greendao.FraudSmsDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,9 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private ListView listView;
+
+    private DaoSession daoSession;
+    private FraudSmsDao smsDao;
 
     private Dialog alertDialog;
     private RelativeLayout longlayout;
@@ -139,9 +143,20 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
                     "于是开始逐渐丧失对学习的兴趣和热情，甚至产生负面的消极的情绪，试图通过电子游戏来转移失落感。";
             list.add(new SmsData("66666" + i,"2017-04-"+i,content,0));
         }*/
-        list = GetSms.getSmsInPhone(getActivity());
-        Log.i("phoneFraud-phone  list"," "+list.size());
+
+    //    list = GetSms.getSmsInPhone(getActivity());
+        list = BaseApplication.getFraudsmslist();
+
+    /*    daoSession = BaseApplication.getInstances().getDaoSession();
+        smsDao = daoSession.getFraudSmsDao();
+        List<FraudSms> smsList = smsDao.loadAll();
+        FraudSms s = smsList.get(0);
+        SmsData sm = new SmsData("001",s.getSmsnumber(),s.getSmstime(),s.getSmscontent(),s.getType());
+        sm.setSmsname(s.getSmsname());
+        list.add(sm);*/
+        Log.i("phoneFraud-phone  list", " " + list.size());
         smsAdapter = new FraudSmsAdapter(getActivity(),list);
+        BaseApplication.setFraudsmsAdapter(smsAdapter);
         lv.setAdapter(smsAdapter);
 
         lv.setOnItemClickListener(this);
@@ -200,7 +215,7 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
                                         for (int i = len - 1; i >= 0; i--) {
                                             Boolean value = smsAdapter.getIsSelectedMap().get(i);
                                             if (value) {
-                                                SmsReadDao.deleteOneSendSms(getActivity(),list.get(i).getId());
+                                             //   SmsReadDao.deleteOneSendSms(getActivity(),list.get(i).getId());
                                                 list.remove(i);
                                                 smsAdapter.getIsSelectedMap().put(i,
                                                         false);

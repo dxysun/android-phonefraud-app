@@ -54,6 +54,7 @@ public class SmsObserver extends ContentObserver {
                 String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date(Long.parseLong(msgDate)));
                 String msgObj = "收件箱\nId：" + msgId + "\n号码：" + msgAddr + "\n内容：" + msgBody + "\n类型：" + msgType + "\n时间：" + date + "\n";
                 handler.sendMessage(Message.obtain(handler, 1, msgObj));
+
             }
             cursor.close();
         }

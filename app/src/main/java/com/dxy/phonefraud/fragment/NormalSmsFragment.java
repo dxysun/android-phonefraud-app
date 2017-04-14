@@ -1,25 +1,37 @@
 package com.dxy.phonefraud.fragment;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 
+import com.dxy.phonefraud.BaseApplication;
+import com.dxy.phonefraud.DataSource.GetSms;
+import com.dxy.phonefraud.DataSource.SmsReadDao;
+import com.dxy.phonefraud.FraudSmsDetialActivity;
+import com.dxy.phonefraud.NormalSmsDetialActivity;
 import com.dxy.phonefraud.R;
+import com.dxy.phonefraud.adapter.FraudSmsAdapter;
+import com.dxy.phonefraud.adapter.NormalSmsAdapter;
+import com.dxy.phonefraud.entity.SmsData;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link NormalSmsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link NormalSmsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class NormalSmsFragment extends Fragment{
+import java.util.List;
+
+public class NormalSmsFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener,View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -28,6 +40,14 @@ public class NormalSmsFragment extends Fragment{
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+
+    private Dialog alertDialog;
+    private RelativeLayout longlayout;
+    private boolean islong;
+
+    private NormalSmsAdapter smsAdapter;
+    private List<SmsData> list;
 
  //   private OnFragmentInteractionListener mListener;
 
@@ -69,45 +89,181 @@ public class NormalSmsFragment extends Fragment{
         return inflater.inflate(R.layout.fragment_normal_sms, container, false);
     }
 
+    @Override
+    public void onActivityCreated (@Nullable Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
 
+        Button allselect = (Button) getView().findViewById(R.id.allselect);
+        Button delete = (Button) getView().findViewById(R.id.delete);
+        Button cencel = (Button) getView().findViewById(R.id.cencel);
+        Button reselect = (Button) getView().findViewById(R.id.reselect);
+        longlayout = (RelativeLayout) getView().findViewById(R.id.longlayout);
+        allselect.setOnClickListener(this);
+        delete.setOnClickListener(this);
+        cencel.setOnClickListener(this);
+        reselect.setOnClickListener(this);
+        islong = false;
 
+        ListView lv = (ListView) getView().findViewById(R.id.normalsmslist);
 
-   // TODO: Rename method, update argument and hook method into UI event
- /*    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    //    list = GetSms.getSmsInPhone(getActivity());
+        list = BaseApplication.getNormalsmslist();
+        if(list == null)
+        {
+            BaseApplication.setNormalsmslist(getActivity());
+            list = BaseApplication.getNormalsmslist();
         }
+
+        Log.i("phoneFraud-phone  list", " " + list.size());
+        smsAdapter = new NormalSmsAdapter(getActivity(),list);
+        BaseApplication.setNormalsmsAdapter(smsAdapter);
+        lv.setAdapter(smsAdapter);
+
+        lv.setOnItemClickListener(this);
+        lv.setOnItemLongClickListener(this);
+
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+    public void onClick(View arg0) {
+        int id = arg0.getId();
+        switch (id) {
+            case R.id.allselect:
+                for (int i = 0; i < list.size(); i++) {
+                    smsAdapter.getIsSelectedMap().put(i,
+                            true);
+                }
+                smsAdapter.notifyDataSetChanged();
+                break;
+            case R.id.reselect:
+                for (int i = 0; i < list.size(); i++) {
+                    if (smsAdapter.getIsSelectedMap()
+                            .get(i)) {
+                        smsAdapter.getIsSelectedMap().put(
+                                i, false);
+                    } else {
+                        smsAdapter.getIsSelectedMap().put(
+                                i, true);
+                    }
+                }
+                smsAdapter.notifyDataSetChanged();
+                break;
+            case R.id.cencel:
+                islong = false;
+                longlayout.setVisibility(View.GONE);
+                for (int i = 0; i < list.size(); i++) {
+                    smsAdapter.getIsSelectedMap().put(i,
+                            false);
+                    smsAdapter.getIsvisibleMap().put(i,
+                            CheckBox.GONE);
+                }
+
+                smsAdapter.notifyDataSetChanged();
+                break;
+            case R.id.delete:
+
+                alertDialog = new AlertDialog.Builder(getActivity())
+                        .setTitle("确定删除？")
+                        .setMessage("您确定删除所选信息？")
+                                // .setIcon(R.drawable.lianxiren)
+                        .setPositiveButton("确定",
+                                new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface arg0,
+                                                        int arg1) {
+                                        int len = list.size();
+                                        for (int i = len - 1; i >= 0; i--) {
+                                            Boolean value = smsAdapter.getIsSelectedMap().get(i);
+                                            if (value) {
+                                        //       SmsReadDao.deleteOneSendSms(getActivity(), list.get(i).getId());
+                                                list.remove(i);
+                                                smsAdapter.getIsSelectedMap().put(i,
+                                                        false);
+                                            }
+                                        }
+                                        smsAdapter.notifyDataSetChanged();
+                                        alertDialog.cancel();
+                                    }
+                                })
+                        .setNegativeButton("取消",
+                                new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface arg0,
+                                                        int arg1) {
+                                        alertDialog.cancel();
+                                    }
+                                }).create();
+                alertDialog.show();
+                break;
+
+            default:
+                break;
         }
     }
-
+    //ListView的点击事件
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+
+        ListView listView = (ListView) arg0;
+        int id = listView.getId();
+        if(islong){
+            switch (id) {
+                case R.id.normalsmslist:
+                    NormalSmsAdapter.ViewHolder holder = (NormalSmsAdapter.ViewHolder) arg1.getTag();
+                    // 改变CheckBox的状态
+                    holder.checkBox.toggle();
+                    smsAdapter.getIsSelectedMap().put(arg2, true);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        else{
+
+            /*      News news = list.get(arg2);
+
+            intent.putExtra("obj", news);
+            Bundle b1 = new Bundle();
+            b1.putString("arg1", "今天七月七");
+            intent.putExtra("bundle", b1);
+
+            startActivity(intent);*/
+            Intent intent = new Intent(getActivity(), NormalSmsDetialActivity.class);
+            Bundle bundle = new Bundle();
+
+            SmsData sms = list.get(arg2);
+
+            //    intent.putExtra("sms", sms);
+            bundle.putInt("position",arg2);
+            bundle.putParcelable("sms", sms);
+            intent.putExtras(bundle);
+            startActivity(intent);
+
+        }
+    }
+    //ListView的长按事件
+    @Override
+    public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
+                                   long arg3) {
+        ListView listView = (ListView) arg0;
+        int id = listView.getId();
+        switch (id) {
+            case R.id.normalsmslist:
+                islong = true;
+                longlayout.setVisibility(View.VISIBLE);
+                for (int i = 0; i < list.size(); i++) {
+                    smsAdapter.getIsvisibleMap().put(i, CheckBox.VISIBLE);
+                }
+                smsAdapter.notifyDataSetChanged();
+                break;
+            default:
+                break;
+        }
+        return false;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-/*   public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }*/
+
 }

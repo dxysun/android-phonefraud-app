@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="张三 12345678909"
-            android:id="@+id/textView3"
+            android:id="@+id/record_info"
             android:layout_weight="6"
             android:textSize="20dp"
             android:background="#ffffff"
@@ -64,7 +64,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="拨打时间:"
+            android:text="呼入时间:"
             android:id="@+id/textView4"
             android:layout_weight="1"
             android:textStyle="bold"
@@ -78,7 +78,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="2017-06-06 14:00"
-            android:id="@+id/textView5"
+            android:id="@+id/record_time"
             android:layout_weight="6"
             android:textSize="20dp"
             android:background="#ffffff"
@@ -104,19 +104,33 @@
         <ImageButton
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:id="@+id/imageButton"
+            android:id="@+id/playButton"
             android:background="@drawable/play" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="录音文件"
-            android:id="@+id/textView8"
+            android:id="@+id/record_file"
             android:textSize="20sp"
             android:gravity="center_vertical"
             android:layout_marginLeft="10dp" />
 
     </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:id="@+id/scrollView2"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/record_text"
+            android:background="#ffffff" />
+    </ScrollView>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -128,7 +142,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="删除"
-            android:id="@+id/button"
+            android:id="@+id/delete_record"
             android:layout_gravity="bottom"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
@@ -139,11 +153,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="标记为诈骗电话"
-            android:id="@+id/button2"
+            android:id="@+id/sign_record_fraud"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_above="@+id/button"
+            android:layout_above="@+id/delete_record"
             />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="将录音转化为文本"
+            android:id="@+id/record_to_text"
+            android:layout_above="@+id/sign_record_fraud"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp" />
 
 
     </RelativeLayout>

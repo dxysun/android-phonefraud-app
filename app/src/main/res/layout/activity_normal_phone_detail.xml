@@ -22,8 +22,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="10dp">
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="#ffffff"
+        android:layout_marginRight="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,8 +38,6 @@
             android:textSize="20dp"
             android:background="#fcfcfc"
             android:singleLine="false"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
             android:paddingLeft="5dp" />
         <TextView
             android:layout_width="wrap_content"
@@ -44,27 +46,26 @@
             android:id="@+id/phoneinfo"
             android:layout_weight="6"
             android:textSize="20dp"
-            android:background="#ffffff"
             android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:layout_marginRight="10dp" />
+            android:paddingBottom="5dp" />
     </LinearLayout>
 
 
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="5dp"
+        android:visibility="visible">
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="拨打时间:"
+            android:text="通话记录(呼入):"
             android:id="@+id/textView4"
             android:layout_weight="1"
             android:textStyle="bold"
@@ -73,20 +74,18 @@
             android:singleLine="false"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:paddingLeft="5dp" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2017-06-06 14:00"
-            android:id="@+id/calltime"
-            android:layout_weight="6"
-            android:textSize="20dp"
-            android:background="#ffffff"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:layout_marginRight="10dp" />
-    </LinearLayout>
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp" />
 
+    </LinearLayout>
+    <ListView
+        android:id="@+id/phonelist"
+        android:layout_width="fill_parent"
+        android:layout_height="280dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp"
+        android:background="#ffffff" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -97,7 +96,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="删除"
-            android:id="@+id/button"
+            android:id="@+id/delete_phone"
             android:layout_gravity="bottom"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
@@ -107,11 +106,11 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="标记为诈骗短信"
-            android:id="@+id/button2"
+            android:text="标记为诈骗电话"
+            android:id="@+id/sign_fraud"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_above="@+id/button"
+            android:layout_above="@+id/delete_phone"
             />
 
 

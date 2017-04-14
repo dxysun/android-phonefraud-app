@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.dxy.phonefraud.BaseApplication;
 import com.dxy.phonefraud.NormalPhoneDetialActivity;
 import com.dxy.phonefraud.R;
 import com.dxy.phonefraud.RecordPhoneDetielActivity;
@@ -67,11 +68,16 @@ public class RecordPhoneFragment extends Fragment implements AdapterView.OnItemC
 
 //        TextView tv=(TextView)getView().findViewById(R.id.tv);
         ListView lv = (ListView) getView().findViewById(R.id.recordphonelist);
-        list = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            list.add(new PhoneData("110","888888" + i, "王五", "2017-04-"+ i,2));
+        list = BaseApplication.getRecoredphonelist();
+        if(list == null){
+            BaseApplication.setRecoredphonelist();
+            list = BaseApplication.getRecoredphonelist();
         }
+     /*   for (int i = 0; i < 20; i++) {
+            list.add(new PhoneData("110","888888" + i, "王五", "2017-04-"+ i,2));
+        }*/
         phoneAdapter = new RecordPhoneAdapter(getActivity(),list);
+        BaseApplication.setRecordhoneAdapter(phoneAdapter);
         lv.setAdapter(phoneAdapter);
 
         lv.setOnItemClickListener(this);
@@ -176,6 +182,15 @@ public class RecordPhoneFragment extends Fragment implements AdapterView.OnItemC
         }
         else{
             Intent intent = new Intent(getActivity(), RecordPhoneDetielActivity.class);
+            Bundle bundle = new Bundle();
+
+            PhoneData phone = list.get(arg2);
+            //Log.i("phonefraud-phone", "send  " + phone.getPhonenumber());
+            //   intent.putExtra("plist", plist);
+            bundle.putInt("position",arg2);
+            bundle.putParcelable("phone", phone);
+
+            intent.putExtras(bundle);
             startActivity(intent);
         }
     }

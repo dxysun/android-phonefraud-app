@@ -18,18 +18,19 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.dxy.phonefraud.BaseApplication;
 import com.dxy.phonefraud.DataSource.GetCall;
-import com.dxy.phonefraud.FraudSmsDetialActivity;
 import com.dxy.phonefraud.NormalPhoneDetialActivity;
 import com.dxy.phonefraud.R;
 import com.dxy.phonefraud.adapter.NormalPhoneAdapter;
-import com.dxy.phonefraud.adapter.PhoneAdapter;
-import com.dxy.phonefraud.adapter.SmsAdapter;
 import com.dxy.phonefraud.entity.PhoneData;
-import com.dxy.phonefraud.entity.SmsData;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -38,11 +39,15 @@ import java.util.List;
 public class NormalPhoneFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener,View.OnClickListener{
 
     private NormalPhoneAdapter phoneAdapter;
-    private List<PhoneData> list;
-
+    private ArrayList<PhoneData> list;
+    private HashMap<String,ArrayList<PhoneData>> phonemap;
     private Dialog alertDialog;
     private RelativeLayout longlayout;
     private boolean islong;
+
+//    private DaoSession daoSession;
+//    private PhoneDao phoneDao;
+
     public NormalPhoneFragment() {
         // Required empty public constructor
     }
@@ -70,16 +75,49 @@ public class NormalPhoneFragment extends Fragment implements AdapterView.OnItemC
         reselect.setOnClickListener(this);
         islong = false;
 
-//        TextView tv=(TextView)getView().findViewById(R.id.tv);
         ListView lv = (ListView) getView().findViewById(R.id.normalphonelist);
-        list = GetCall.GetCallsInPhone(getActivity());
+
+        list = BaseApplication.getNormalphonelist();
+        phonemap = BaseApplication.getNormalphonemap();
+        if(list == null || phonemap == null)
+        {
+            Log.i("NormalPhoneFragment","list phonemap  null ");
+            BaseApplication.setNormalphonelist(getActivity());
+            list = BaseApplication.getNormalphonelist();
+            phonemap = BaseApplication.getNormalphonemap();
+        }
+    //    list = GetCall.GetCallsInPhoneBylist(getActivity());
+    /*    list = new ArrayList<>();
+        phonemap = GetCall.GetCallsInPhoneBymap(getActivity());
+
+        List<Map.Entry<String,ArrayList<PhoneData>>> listtemp = new ArrayList<>(phonemap.entrySet());
+        Collections.sort(listtemp, new Comparator<Map.Entry<String, ArrayList<PhoneData>>>() {
+            //降序排序
+            @Override
+            public int compare(Map.Entry<String, ArrayList<PhoneData>> o1, Map.Entry<String, ArrayList<PhoneData>> o2) {
+                String time1 = o1.getValue().get(0).getCalltime();
+                String time2 = o2.getValue().get(0).getCalltime();
+                return time2.compareTo(time1);
+            }
+        });
+        phonemap.clear();
+        for(Map.Entry<String, ArrayList<PhoneData>> entry : listtemp){
+            phonemap.put(entry.getKey(), entry.getValue());
+            PhoneData p = entry.getValue().get(0);
+            list.add(p);
+        }*/
+        /*daoSession = BaseApplication.getInstances().getDaoSession();
+        phoneDao = daoSession.getPhoneDao();
+        List<FraudPhone> phones = phoneDao.loadAll();
+        FraudPhone p = phones.get(0);*/
 
     /*    list = new ArrayList<>();
         for (int i = 0; i < 50; i++) {
             list.add(new PhoneData("888888" + i, "李四", "2017-04-"+ i,1));
         }*/
-        Log.i("phoneFraud-phone  list"," "+list.size());
+      //  List<FraudPhone> phones =
         phoneAdapter = new NormalPhoneAdapter(getActivity(),list);
+        BaseApplication.setNormalphoneAdapter(phoneAdapter);
         lv.setAdapter(phoneAdapter);
 
         lv.setOnItemClickListener(this);
@@ -126,7 +164,7 @@ public class NormalPhoneFragment extends Fragment implements AdapterView.OnItemC
 
                 alertDialog = new AlertDialog.Builder(getActivity())
                         .setTitle("确定删除？")
-                        .setMessage("您确定删除所选信息？")
+                        .setMessage("您确定删除该号码下所有通话记录？")
                                 // .setIcon(R.drawable.lianxiren)
                         .setPositiveButton("确定",
                                 new DialogInterface.OnClickListener() {
@@ -138,7 +176,8 @@ public class NormalPhoneFragment extends Fragment implements AdapterView.OnItemC
                                         for (int i = len - 1; i >= 0; i--) {
                                             Boolean value = phoneAdapter.getIsSelectedMap().get(i);
                                             if (value) {
-                                                GetCall.DeleteCallById(getActivity(),list.get(i).getId());
+                                            //    GetCall.DeleteCallById(getActivity(),list.get(i).getId());
+                                           //     GetCall.DeleteCallByNumber(getActivity(), list.get(i).getPhonenumber());
                                                 list.remove(i);
                                                 phoneAdapter.getIsSelectedMap().put(i,
                                                         false);
@@ -189,10 +228,19 @@ public class NormalPhoneFragment extends Fragment implements AdapterView.OnItemC
             Bundle bundle = new Bundle();
 
             PhoneData phone = list.get(arg2);
-            Log.i("phonefraud-phone", "send  " + phone.getPhonenumber());
-            //    intent.putExtra("sms", sms);
-
+            ArrayList<PhoneData> plist = phonemap.get(phone.getPhonenumber());
+            //Log.i("phonefraud-phone", "send  " + phone.getPhonenumber());
+             //   intent.putExtra("plist", plist);
+            bundle.putInt("position",arg2);
             bundle.putParcelable("phone", phone);
+            if(plist != null)
+            {
+                bundle.putParcelableArrayList("phonelist",plist);
+            }
+            else
+            {
+                Log.i("phonefraud-phone", "send list null  ");
+            }
             intent.putExtras(bundle);
             startActivity(intent);
 
