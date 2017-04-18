@@ -40,5 +40,5 @@ dependencies {
     compile 'org.greenrobot:greendao:3.2.0'
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'com.google.code.gson:gson:2.4'
-
+    compile 'org.litepal.android:core:1.5.1'
 }

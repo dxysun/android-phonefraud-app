@@ -3,11 +3,14 @@ package com.dxy.phonefraud.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.litepal.crud.DataSupport;
+
 /**
  * Created by dongx on 2017/4/5.
  */
-public class PhoneData implements Parcelable {
-    private String id;
+public class PhoneData extends DataSupport implements Parcelable {
+    private long id;
+    private String phoneid;
     private String phonenumber;
     private String calltime;
     private String phonename;
@@ -18,20 +21,26 @@ public class PhoneData implements Parcelable {
 
     public PhoneData(){
     }
-    public PhoneData(String id,String phonenumber,String phonename,String calltime,int listtype){
-        this.id = id;
+    public PhoneData(String phoneid,String phonenumber,String phonename,String calltime,int listtype){
+        this.phoneid = phoneid;
         this.calltime = calltime;
         this.phonename = phonename;
         this.phonenumber = phonenumber;
         this.listtype = listtype;
     }
-
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
+    }
+    public String getPhoneid() {
+        return phoneid;
+    }
+
+    public void setPhoneid(String id) {
+        this.phoneid = id;
     }
 
     public String getPhonenumber(){
@@ -78,7 +87,8 @@ public class PhoneData implements Parcelable {
     }
 
     protected PhoneData(Parcel in) {
-        id = in.readString();
+        id = in.readLong();
+        phoneid = in.readString();
         phonenumber = in.readString();
         calltime = in.readString();
         phonename = in.readString();
@@ -105,7 +115,8 @@ public class PhoneData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(id);
+        parcel.writeLong(id);
+        parcel.writeString(phoneid);
         parcel.writeString(phonenumber);
         parcel.writeString(calltime);
         parcel.writeString(phonename);

@@ -84,7 +84,7 @@ public class FraudSmsDetialActivity extends AppCompatActivity implements View.On
                                         fphone.setPhonename(phone.getPhonename());
                                         fphone.setType(0);*/
                                         BaseApplication.addNormalSms(sms);
-                                        BaseApplication.deleteFraudSms(position, sms.getId(), FraudSmsDetialActivity.this);
+                                        BaseApplication.deleteFraudSms(position, sms.getSmsid(), FraudSmsDetialActivity.this);
                                         FraudSmsDetialActivity.this.finish();
                                     }
                                 })
@@ -111,7 +111,7 @@ public class FraudSmsDetialActivity extends AppCompatActivity implements View.On
                                     @Override
                                     public void onClick(DialogInterface arg0,
                                                         int arg1) {
-                                        BaseApplication.deleteFraudSms(position,sms.getId(),FraudSmsDetialActivity.this);
+                                        BaseApplication.deleteFraudSms(position,sms.getSmsid(),FraudSmsDetialActivity.this);
                                         FraudSmsDetialActivity.this.finish();
                                     }
                                 })

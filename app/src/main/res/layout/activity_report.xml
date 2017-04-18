@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:title="http://schemas.android.com/apk/res-auto"
+    tools:context="com.dxy.phonefraud.ReportActivity"
+    android:orientation="vertical">
+
+    <com.dxy.phonefraud.library.TitleView
+        android:layout_width="match_parent"
+        android:background="#0093fe"
+        title:left_image="@mipmap/back_normal"
+        title:title_name="举报诈骗电话"
+        title:title_text_color="@android:color/white"
+
+        title:title_text_size="17sp"
+        title:small_text_size="@dimen/title_text_small_size"
+
+        android:layout_height="50dp"
+        android:clickable="true" />
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="举报诈骗电话: "
+            android:id="@+id/textView3"
+            android:background="#ffffff"
+            android:textSize="25sp"
+            android:layout_marginTop="80dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="20dp"
+            android:textColor="#f82424" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:ems="10"
+            android:id="@+id/editFraudPhone"
+            android:background="#ffffff"
+            android:textSize="25sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp" />
+
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="提交"
+        android:id="@+id/reportButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp" />
+
+
+</LinearLayout>

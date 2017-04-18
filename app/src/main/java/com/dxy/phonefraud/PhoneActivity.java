@@ -1,9 +1,11 @@
 package com.dxy.phonefraud;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -16,12 +18,14 @@ import com.dxy.phonefraud.fragment.RecordPhoneFragment;
 
 import java.util.ArrayList;
 
-public class PhoneActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener{
+public class PhoneActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener,View.OnClickListener{
     private ViewPager viewPager;
     private RadioGroup radioGroup;
     private RadioButton fraud_phone,normal_phone,record_phone;
     private ArrayList<Fragment> alFragment;
     private ImageView iv_back;
+    private ImageView iv_report;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,14 +42,16 @@ public class PhoneActivity extends AppCompatActivity implements RadioGroup.OnChe
         fraud_phone=(RadioButton) findViewById(R.id.fraud_phone);
         normal_phone=(RadioButton) findViewById(R.id.normal_phone);
         record_phone=(RadioButton) findViewById(R.id.record_phone);
+        iv_report = (ImageView)findViewById(R.id.iv_right_image);
 
+        iv_report.setOnClickListener(this);
         radioGroup.setOnCheckedChangeListener(this);
         iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PhoneActivity.this.finish();
             }
-        } );
+        });
     }
     private void initViewPager(){
         FraudPhoneFragment fraudPhoneFragment=new FraudPhoneFragment();
@@ -107,6 +113,21 @@ public class PhoneActivity extends AppCompatActivity implements RadioGroup.OnChe
                 break;
 
         }
+    }
+    @Override
+    public void onClick(View v) {
+        // TODO Auto-generated method stub
+
+        switch(v.getId()){
+            case R.id.iv_right_image:
+                Intent intent = new Intent(this,ReportActivity.class);
+                startActivity(intent);
+                break;
+
+            default:
+                break;
+        }
+        Log.i("用Activity实现", "点击事件");
     }
 
 }

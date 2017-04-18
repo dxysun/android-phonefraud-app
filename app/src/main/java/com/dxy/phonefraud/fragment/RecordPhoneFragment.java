@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.dxy.phonefraud.BaseApplication;
 import com.dxy.phonefraud.NormalPhoneDetialActivity;
@@ -70,16 +71,21 @@ public class RecordPhoneFragment extends Fragment implements AdapterView.OnItemC
         ListView lv = (ListView) getView().findViewById(R.id.recordphonelist);
         list = BaseApplication.getRecoredphonelist();
         if(list == null){
-            BaseApplication.setRecoredphonelist();
-            list = BaseApplication.getRecoredphonelist();
+            Toast.makeText(getActivity().getApplicationContext(), "数据正在初始化中，请稍候", Toast.LENGTH_LONG).show();
+        //    BaseApplication.setRecoredphonelist();
+        //    list = BaseApplication.getRecoredphonelist();
+        }
+        else
+        {
+            phoneAdapter = new RecordPhoneAdapter(getActivity(),list);
+            BaseApplication.setRecordhoneAdapter(phoneAdapter);
+            lv.setAdapter(phoneAdapter);
+
+
         }
      /*   for (int i = 0; i < 20; i++) {
             list.add(new PhoneData("110","888888" + i, "王五", "2017-04-"+ i,2));
         }*/
-        phoneAdapter = new RecordPhoneAdapter(getActivity(),list);
-        BaseApplication.setRecordhoneAdapter(phoneAdapter);
-        lv.setAdapter(phoneAdapter);
-
         lv.setOnItemClickListener(this);
         lv.setOnItemLongClickListener(this);
 

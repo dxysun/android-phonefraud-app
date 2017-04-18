@@ -3,11 +3,14 @@ package com.dxy.phonefraud.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.litepal.crud.DataSupport;
+
 /**
  * Created by dongx on 2017/4/5.
  */
-public class SmsData implements Parcelable {
-    private String id;
+public class SmsData extends DataSupport implements Parcelable {
+    private long id;
+    private String smsid;
     private String smsnumber;
     private String smscontent;
     private String smstime;
@@ -16,12 +19,19 @@ public class SmsData implements Parcelable {
 
     public SmsData(){
     }
-    public SmsData(String id,String smsnumber,String smstime,String smscontent,int type){
-        this.id = id;
+    public SmsData(String smsid,String smsnumber,String smstime,String smscontent,int type){
+        this.smsid = smsid;
         this.smsnumber = smsnumber;
         this.smscontent = smscontent;
         this.smstime = smstime;
         this.type = type;
+    }
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
     public String getSmsnumber(){
         return smsnumber;
@@ -44,12 +54,12 @@ public class SmsData implements Parcelable {
         this.smsname = smsname;
     }
 
-    public String getId() {
-        return id;
+    public String getSmsid() {
+        return smsid;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setSmsid(String smsid) {
+        this.smsid = smsid;
     }
 
     public void setSmsnumber(String number){
@@ -66,6 +76,8 @@ public class SmsData implements Parcelable {
     }
 
     protected SmsData(Parcel in) {
+        id = in.readLong();
+        smsid = in.readString();
         smsnumber = in.readString();
         smscontent = in.readString();
         smstime = in.readString();
@@ -90,6 +102,7 @@ public class SmsData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeLong(id);
         parcel.writeString(smsnumber);
         parcel.writeString(smscontent);
         parcel.writeString(smstime);

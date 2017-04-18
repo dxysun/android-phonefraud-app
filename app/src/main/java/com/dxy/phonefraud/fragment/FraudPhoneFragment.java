@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.dxy.phonefraud.BaseApplication;
 import com.dxy.phonefraud.FraudPhoneDetialActivity;
@@ -82,17 +83,23 @@ public class FraudPhoneFragment extends Fragment implements AdapterView.OnItemCl
         list = BaseApplication.getFraudphonelist();
         if(list == null)
         {
-            BaseApplication.setFraudphonelist();
-            list = BaseApplication.getFraudphonelist();
+        //    BaseApplication.setFraudphonelist();
+
+        //    list = BaseApplication.getFraudphonelist();
+            Toast.makeText(getActivity().getApplicationContext(), "数据正在初始化中，请稍候", Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+            phoneAdapter = new FraudPhoneAdapter(getActivity(),list);
+            BaseApplication.setFraudphoneAdapter(phoneAdapter);
+            lv.setAdapter(phoneAdapter);
         }
      /*   for (int i = 0; i < 10; i++) {
             list.add(new PhoneData("110","999999" + i, "张三", "2017-04-"+ i,0));
         }*/
 
 
-        phoneAdapter = new FraudPhoneAdapter(getActivity(),list);
-        BaseApplication.setFraudphoneAdapter(phoneAdapter);
-        lv.setAdapter(phoneAdapter);
+
 
         lv.setOnItemClickListener(this);
         lv.setOnItemLongClickListener(this);

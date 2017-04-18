@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.dxy.phonefraud.BaseApplication;
 import com.dxy.phonefraud.DataSource.GetSms;
@@ -146,6 +147,18 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
 
     //    list = GetSms.getSmsInPhone(getActivity());
         list = BaseApplication.getFraudsmslist();
+        if(list == null)
+        {
+            Log.i("phoneFraud-phone  list", " " + list.size());
+            Toast.makeText(getActivity().getApplicationContext(), "数据正在初始化中，请稍候", Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+            smsAdapter = new FraudSmsAdapter(getActivity(),list);
+            BaseApplication.setFraudsmsAdapter(smsAdapter);
+            lv.setAdapter(smsAdapter);
+
+        }
 
     /*    daoSession = BaseApplication.getInstances().getDaoSession();
         smsDao = daoSession.getFraudSmsDao();
@@ -154,10 +167,8 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
         SmsData sm = new SmsData("001",s.getSmsnumber(),s.getSmstime(),s.getSmscontent(),s.getType());
         sm.setSmsname(s.getSmsname());
         list.add(sm);*/
-        Log.i("phoneFraud-phone  list", " " + list.size());
-        smsAdapter = new FraudSmsAdapter(getActivity(),list);
-        BaseApplication.setFraudsmsAdapter(smsAdapter);
-        lv.setAdapter(smsAdapter);
+
+
 
         lv.setOnItemClickListener(this);
         lv.setOnItemLongClickListener(this);

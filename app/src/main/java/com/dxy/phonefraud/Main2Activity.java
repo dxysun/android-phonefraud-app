@@ -2,6 +2,8 @@ package com.dxy.phonefraud;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -20,9 +22,12 @@ import com.dxy.phonefraud.greendao.FraudPhone;
 import com.dxy.phonefraud.greendao.FraudPhoneDao;
 import com.dxy.phonefraud.greendao.FraudSms;
 import com.dxy.phonefraud.greendao.FraudSmsDao;
+import com.dxy.phonefraud.listen.SMSReceiver;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.SpeechRecognizer;
+
+import org.litepal.LitePal;
 
 public class Main2Activity extends AppCompatActivity implements View.OnClickListener {
     private ImageView iv_setting;
@@ -37,6 +42,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
     private SmsObserver smsContentObserver;
 
     private CallRecord callRecord;
+    private Handler mHandler;
 
 
 
@@ -76,12 +82,18 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         sms.setSmsnumber("12345678901");
         sms.setSmstime("2017-04-09 15:22:45");
         smsDao.insert(sms);*/
+        Thread t = new Thread(new Runnable(){
+            @Override
+            public void run() {
+                BaseApplication.setNormalphonelist(Main2Activity.this);
+                BaseApplication.setFraudphonelist();
+                BaseApplication.setRecoredphonelist();
+                BaseApplication.setNormalsmslist(Main2Activity.this);
+                BaseApplication.setFraudsmslist();
+            }
+        });
+        t.start();
 
-        BaseApplication.setNormalphonelist(this);
-        BaseApplication.setFraudphonelist();
-        BaseApplication.setRecoredphonelist();
-        BaseApplication.setNormalsmslist(this);
-        BaseApplication.setFraudsmslist();
 
         callRecord = new CallRecord.Builder(this)
                 .setRecordFileName("PhoneCallRecorder")
@@ -92,9 +104,13 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         callRecord.changeReceiver(new MyCallRecordReceiver(callRecord));
         callRecord.enableSaveFile();
         callRecord.startCallReceiver();
- /*       smsContentObserver = new SmsObserver(mHandler, this);
-        getContentResolver().registerContentObserver(Uri.parse("content://sms"), true, smsContentObserver);
-        callLogObserver = new CallLogObserver(mHandler, this);
+        SMSReceiver receiver = new SMSReceiver();
+        registerReceiver(receiver, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
+        mHandler = new Handler();
+
+    //    smsContentObserver = new SmsObserver(mHandler, this);
+    //    getContentResolver().registerContentObserver(Uri.parse("content://sms"), true, smsContentObserver);
+ /*        callLogObserver = new CallLogObserver(mHandler, this);
         getContentResolver().registerContentObserver(CallLog.Calls.CONTENT_URI, true, callLogObserver);//等价于【Uri.parse("content://call_log/calls")】
 */
     }
@@ -112,7 +128,8 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
 
         switch(v.getId()){
             case R.id.iv_right_image:
-                Intent intent = new Intent(this,SettingsActivity.class);
+                LitePal.getDatabase();
+                Intent intent = new Intent(this,SetActivity.class);
                 startActivity(intent);
                 break;
             case R.id.phoneButton:

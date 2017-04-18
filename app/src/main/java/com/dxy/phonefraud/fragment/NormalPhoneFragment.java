@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.dxy.phonefraud.BaseApplication;
 import com.dxy.phonefraud.DataSource.GetCall;
@@ -81,10 +82,17 @@ public class NormalPhoneFragment extends Fragment implements AdapterView.OnItemC
         phonemap = BaseApplication.getNormalphonemap();
         if(list == null || phonemap == null)
         {
-            Log.i("NormalPhoneFragment","list phonemap  null ");
-            BaseApplication.setNormalphonelist(getActivity());
-            list = BaseApplication.getNormalphonelist();
-            phonemap = BaseApplication.getNormalphonemap();
+            Log.i("NormalPhoneFragment", "list phonemap  null ");
+            Toast.makeText(getActivity().getApplicationContext(), "数据正在初始化中，请稍候", Toast.LENGTH_LONG).show();
+        //    BaseApplication.setNormalphonelist(getActivity());
+        //    list = BaseApplication.getNormalphonelist();
+        //    phonemap = BaseApplication.getNormalphonemap();
+        }
+        else
+        {
+            phoneAdapter = new NormalPhoneAdapter(getActivity(),list);
+            BaseApplication.setNormalphoneAdapter(phoneAdapter);
+            lv.setAdapter(phoneAdapter);
         }
     //    list = GetCall.GetCallsInPhoneBylist(getActivity());
     /*    list = new ArrayList<>();
@@ -116,9 +124,7 @@ public class NormalPhoneFragment extends Fragment implements AdapterView.OnItemC
             list.add(new PhoneData("888888" + i, "李四", "2017-04-"+ i,1));
         }*/
       //  List<FraudPhone> phones =
-        phoneAdapter = new NormalPhoneAdapter(getActivity(),list);
-        BaseApplication.setNormalphoneAdapter(phoneAdapter);
-        lv.setAdapter(phoneAdapter);
+
 
         lv.setOnItemClickListener(this);
         lv.setOnItemLongClickListener(this);

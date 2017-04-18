@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.dxy.phonefraud.DataSource.GetCall;
 import com.dxy.phonefraud.callrecord.CallRecord;
 import com.dxy.phonefraud.callrecord.helper.PrefsHelper;
 import com.dxy.phonefraud.entity.Constants;
@@ -75,43 +76,47 @@ public class CallRecordReceiver extends PhoneCallReceiver {
      //   SpeechApp appState = ((SpeechApp)context.getApplicationContext());
      //   appState.setPhonenumber(number);
         phonenumber = number;
-        if(NetworkTest.getNetWorkStatus(context) == Constants.NETWORK_CLASS_2_G || NetworkTest.getNetWorkStatus(context) == Constants.NETWORK_CLASS_UNKNOWN)
+        String name = GetCall.queryNameFromContactsByNumber(context, number);
+        if(name == null)
         {
-            Log.i(TAG,"network   off" );
-            isRecordStarted = true;
-        }
-        else
-        {
-            Log.i(TAG, "network   ok");
-
-            //    Toast.makeText(context.getApplicationContext(), "RINGING " +mIncomingNumber, Toast.LENGTH_LONG).show();
-            try{
-                Thread t = new Thread(new Runnable(){
-                    @Override
-                    public void run() {
-                        result = getHttp("http://dxysun.com:8001/spark/testphone/?phone="+phonenumber);
-                    }
-                });
-                t.start();
-                t.join();
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
-            if(result.equals("ok"))
+            if(NetworkTest.getNetWorkStatus(context) == Constants.NETWORK_CLASS_2_G || NetworkTest.getNetWorkStatus(context) == Constants.NETWORK_CLASS_UNKNOWN)
             {
-                Log.i(TAG, "RINGING :" + "result grt ok");
-                //  Toast.makeText(context.getApplicationContext(), "诈骗电话，请及时挂断", Toast.LENGTH_LONG).show();
-                CustomTimeToast(context.getApplicationContext(), "诈骗电话，请及时挂断", 30 * 1000);
+                Log.i(TAG,"network   off" );
+                isRecordStarted = true;
             }
             else
             {
-                Log.i(TAG, "RINGING  :" + "no result");
-                isRecordStarted = true;
-                Toast.makeText(context.getApplicationContext(), "no result RINGING " + phonenumber, Toast.LENGTH_LONG).show();
+                Log.i(TAG, "network   ok");
+                //    Toast.makeText(context.getApplicationContext(), "RINGING " +mIncomingNumber, Toast.LENGTH_LONG).show();
+                try{
+                    Thread t = new Thread(new Runnable(){
+                        @Override
+                        public void run() {
+                            result = getHttp("http://dxysun.com:8001/spark/testphone/?phone="+phonenumber+"&type=1");
+                        }
+                    });
+                    t.start();
+                    t.join();
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                if(result.equals("ok"))
+                {
+                    Log.i(TAG, "RINGING :" + "result grt ok");
+                    //  Toast.makeText(context.getApplicationContext(), "诈骗电话，请及时挂断", Toast.LENGTH_LONG).show();
+                    CustomTimeToast(context.getApplicationContext(), "诈骗电话，请及时挂断", 30 * 1000);
+                }
+                else
+                {
+                    Log.i(TAG, "RINGING  :" + "no result");
+                    isRecordStarted = true;
+                    Toast.makeText(context.getApplicationContext(), "no result RINGING " + phonenumber, Toast.LENGTH_LONG).show();
+                }
+                Log.i(TAG, "RINGING :" + phonenumber);
             }
-            Log.i(TAG, "RINGING :" + phonenumber);
         }
+
     }
 
     @Override

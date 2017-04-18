@@ -14,12 +14,11 @@
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <!--允许程序改变网络连接状态 -->
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
-
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- 允许程序改变网络连接状态 -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
 
     <application
         android:name=".BaseApplication"
@@ -35,7 +34,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-       <!-- <activity android:name=".Main2Activity" />-->
+        <!-- <activity android:name=".Main2Activity" /> -->
         <activity android:name=".PhoneActivity" />
         <activity android:name=".SmsActivity" />
         <activity android:name=".IntentActivity" />
@@ -48,22 +47,32 @@
         <activity android:name=".RecordPhoneDetielActivity" />
         <activity android:name=".listen.PhoneCallStateActivity" />
 
-        <!--<receiver android:name=".callrecord.MyCallRecordReceiver">
+        <!--
+        <receiver android:name=".callrecord.MyCallRecordReceiver">
             <intent-filter android:priority="1000">
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
--->
-        <!--<service
+        -->
+        <!--
+        <service
             android:name=".service.MyService"
             android:enabled="true">
             <intent-filter>
                 <action  android:name="com.example.service.TEL_SERVICE"/>
                 <action  android:name="android.intent.action.PHONE_STATE"/>
             </intent-filter>
-        </service>-->
+        </service>
 
+        <receiver android:name=".listen.SMSReceiver">
+            <intent-filter android:priority="1000">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+            </intent-filter>
+        </receiver>
+        -->
+
+        <activity android:name=".ReportActivity"></activity>
     </application>
 
 </manifest>

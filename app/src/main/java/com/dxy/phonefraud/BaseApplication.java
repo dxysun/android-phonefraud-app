@@ -20,12 +20,24 @@ import com.dxy.phonefraud.greendao.FraudPhone;
 import com.dxy.phonefraud.greendao.FraudPhoneDao;
 import com.iflytek.cloud.SpeechUtility;
 
+import org.litepal.LitePal;
+import org.litepal.crud.DataSupport;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by dongx on 2017/4/9.
@@ -94,6 +106,7 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        LitePal.initialize(this);
         SpeechUtility.createUtility(BaseApplication.this, "appid=" + getString(R.string.app_id));
         instances = this;
         init();
@@ -158,6 +171,7 @@ public class BaseApplication extends Application {
     }
 
     public static ArrayList<PhoneData> getFraudphonelist() {
+
         return fraudphonelist;
     }
 
@@ -177,6 +191,14 @@ public class BaseApplication extends Application {
             p.setPhonenumber(phone.getPhonenumber());
             fraudphonelist.add(p);
         }*/
+   /*     PhoneData phone1 = new PhoneData();
+        phone1.setPhonenumber("1234567890145");
+        phone1.setPhonename("王五");
+        phone1.setCalltime("2017-04-15 15:22:45");
+        phone1.setType(0);
+        phone1.setIsrecord(0);
+        phone1.save();*/
+
         fraudphonelist = new ArrayList<>();
         PhoneData phone = new PhoneData();
         phone.setPhonenumber("12345678901");
@@ -185,6 +207,13 @@ public class BaseApplication extends Application {
         phone.setType(0);
         phone.setIsrecord(0);
         fraudphonelist.add(phone);
+        List<PhoneData> pl1 = DataSupport.findAll(PhoneData.class);
+        if(pl1.size() > 0)
+        {
+            PhoneData pl = DataSupport.find(PhoneData.class,pl1.get(0).getId());
+            fraudphonelist.add(pl);
+        }
+
      //   fraudphonelist =
     }
 
@@ -333,6 +362,25 @@ public class BaseApplication extends Application {
             //  fraudphoneAdapter.notifyDataSetChanged();
             normalsmsAdapter.add(sms);
         }
+    }
+    public static String postHttp(String msgBody,String type){
+        OkHttpClient okHttpClient = new OkHttpClient();
+        FormBody.Builder fromBodyBuilder = new FormBody.Builder();
+        RequestBody requestBody = fromBodyBuilder.add("sms", msgBody).add("type", type).build();
+        Request.Builder requestBuilder = new Request.Builder();
+        Request request = requestBuilder.url("http://dxysun.com:8001/spark/testsms/").post(requestBody).build();
+
+        Call call = okHttpClient.newCall(request);
+        Log.i("ListenSmsPhone", "start  request");
+        String result = "nonetwork";
+        try {
+            Response response = call.execute();     //同步
+            result = response.body().string();
+            Log.i("ListenSmsPhone", "result  :" + result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 }

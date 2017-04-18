@@ -62,7 +62,7 @@ public class GetCall {
                 switch (type) {
                     case CallLog.Calls.INCOMING_TYPE:
                         PhoneData phone = new PhoneData();
-                        phone.setId(id);
+                        phone.setPhoneid(id);
                         phone.setPhonenumber(strPhone);
                         phone.setCalltime(date);
                         phone.setListtype(1);
@@ -116,7 +116,7 @@ public class GetCall {
                 if(type == CallLog.Calls.INCOMING_TYPE)
                 {
                     PhoneData phone = new PhoneData();
-                    phone.setId(id);
+                    phone.setPhoneid(id);
                     phone.setPhonenumber(strPhone);
                     phone.setCalltime(date);
                     phone.setListtype(1);

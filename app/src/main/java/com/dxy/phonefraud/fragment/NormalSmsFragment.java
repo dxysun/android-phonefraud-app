@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.dxy.phonefraud.BaseApplication;
 import com.dxy.phonefraud.DataSource.GetSms;
@@ -110,14 +111,19 @@ public class NormalSmsFragment extends Fragment implements AdapterView.OnItemCli
         list = BaseApplication.getNormalsmslist();
         if(list == null)
         {
-            BaseApplication.setNormalsmslist(getActivity());
-            list = BaseApplication.getNormalsmslist();
+         //   BaseApplication.setNormalsmslist(getActivity());
+         //   list = BaseApplication.getNormalsmslist();
+            Toast.makeText(getActivity().getApplicationContext(), "数据正在初始化中，请稍候", Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+            smsAdapter = new NormalSmsAdapter(getActivity(),list);
+            BaseApplication.setNormalsmsAdapter(smsAdapter);
+            lv.setAdapter(smsAdapter);
         }
 
         Log.i("phoneFraud-phone  list", " " + list.size());
-        smsAdapter = new NormalSmsAdapter(getActivity(),list);
-        BaseApplication.setNormalsmsAdapter(smsAdapter);
-        lv.setAdapter(smsAdapter);
+
 
         lv.setOnItemClickListener(this);
         lv.setOnItemLongClickListener(this);

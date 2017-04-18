@@ -8,9 +8,21 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.dxy.phonefraud.BaseApplication;
+import com.dxy.phonefraud.entity.SmsData;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by dongx on 2017/4/8.
@@ -19,6 +31,8 @@ public class SmsObserver extends ContentObserver {
 
     private Context context;
     private Handler handler;
+    private String result;
+    private String smsbody;
 
     public SmsObserver(Handler handler, Context context) {
         super(handler);
@@ -42,7 +56,7 @@ public class SmsObserver extends ContentObserver {
     @Override
     public void onChange(boolean selfChange, Uri uri) {
         Log.i("ListenSmsPhone", "aa--短信数据库发生了变化\t" + selfChange + " \t uri " + uri);
-        Uri uri1 = Uri.parse("content://sms");
+    //    Uri uri1 = Uri.parse("content://sms");
         Cursor cursor = context.getContentResolver().query(uri, new String[]{"_id", "address", "body", "type", "date"}, null, null, "date desc");
         if (cursor != null) {
             if (cursor.moveToFirst()) { //最后收到的短信在第一条. This method will return false if the cursor is empty
@@ -54,10 +68,45 @@ public class SmsObserver extends ContentObserver {
                 String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date(Long.parseLong(msgDate)));
                 String msgObj = "收件箱\nId：" + msgId + "\n号码：" + msgAddr + "\n内容：" + msgBody + "\n类型：" + msgType + "\n时间：" + date + "\n";
                 handler.sendMessage(Message.obtain(handler, 1, msgObj));
+                Log.i("ListenSmsPhone", "aa--短信数据库发生了变化  内容为\t" + msgObj);
+
+
+                smsbody = msgBody;
+                try{
+                    Thread t = new Thread(new Runnable(){
+                        @Override
+                        public void run() {
+                            result = getHttp(smsbody,"1");
+                        }
+                    });
+                    t.start();
+                    t.join();
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                SmsData sms = new SmsData();
+                sms.setSmsnumber(msgAddr.substring(3));
+                sms.setSmscontent(msgBody);
+                sms.setSmstime(date);
+                String name = GetCall.queryNameFromContactsByNumber(context, msgAddr.substring(3));
+                if(name != null)
+                    sms.setSmsname(name);
+                if(result.equals("ok"))
+                {
+                    BaseApplication.addNormalSms(sms);
+                }
+                else
+                {
+                    BaseApplication.addFraudSms(sms);
+                }
+
+
 
             }
             cursor.close();
         }
+
         // uri content://sms/status/2528
         // 同步的方法
  /*       SmsInfo info = SmsReadDao.getLastSmsInfo(context);
@@ -102,5 +151,25 @@ public class SmsObserver extends ContentObserver {
             }
 
         }*/
+    }
+    public String getHttp(String msgBody,String type){
+        OkHttpClient okHttpClient = new OkHttpClient();
+        FormBody.Builder fromBodyBuilder = new FormBody.Builder();
+        RequestBody requestBody = fromBodyBuilder.add("sms", msgBody).add("type", type).build();
+        Request.Builder requestBuilder = new Request.Builder();
+        Request request = requestBuilder.url("http://dxysun.com:8001/spark/testsms/").post(requestBody).build();
+
+        Call call = okHttpClient.newCall(request);
+
+        String s = "nonetwork";
+        Log.i("ListenSmsPhone", "start  request");
+        try {
+            Response response = call.execute();     //同步
+            s = response.body().string();
+            Log.i("ListenSmsPhone", "result  :" + result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return s;
     }
 }

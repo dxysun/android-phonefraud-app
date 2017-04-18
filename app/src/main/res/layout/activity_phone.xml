@@ -11,10 +11,10 @@
         title:left_image="@mipmap/back_normal"
         title:title_name="@string/fraud_phone"
         title:title_text_color="@android:color/white"
-
+        title:right_text_two="举报"
         title:title_text_size="17sp"
         title:small_text_size="@dimen/title_text_small_size"
-
+        title:right_image="@drawable/report"
         android:layout_height="50dp"
         android:clickable="true" />
     <RadioGroup
