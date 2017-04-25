@@ -165,6 +165,15 @@ public class CallRecordReceiver extends PhoneCallReceiver {
     @Override
     protected void onOutgoingCallStarted(Context context, String number, Date start) {
     //    startRecord(context, "outgoing", number);
+        if(number == null)
+        {
+            Log.i(TAG, "onOutgoingCallStarted :" + "    null");
+        }
+        else
+        {
+            Log.i(TAG, "onOutgoingCallStarted :" + number);
+        }
+
  /*       RecordTask   recordertask = new RecordTask();
         recordertask.context = context;
         recordertask.phoneNumber = number;
@@ -174,7 +183,15 @@ public class CallRecordReceiver extends PhoneCallReceiver {
 
     @Override
     protected void onOutgoingCallEnded(Context context, String number, Date start, Date end) {
-        stopRecord(context);
+        if(number == null)
+        {
+            Log.i(TAG, "onOutgoingCallEnded :" + "    null");
+        }
+        else
+        {
+            Log.i(TAG, "onOutgoingCallEnded :" + number);
+        }
+  //      stopRecord(context);
     }
 
     @Override

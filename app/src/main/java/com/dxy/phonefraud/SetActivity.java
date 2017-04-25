@@ -1,12 +1,13 @@
 package com.dxy.phonefraud;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
-public class SetActivity extends AppCompatActivity implements View.OnClickListener{
+public class SetActivity extends Activity implements View.OnClickListener{
     private ImageView iv_back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

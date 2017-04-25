@@ -1,5 +1,6 @@
 package com.dxy.phonefraud;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -24,7 +25,7 @@ import com.dxy.phonefraud.service.MyService;
 
 import java.util.ArrayList;
 
-public class NormalPhoneDetialActivity extends AppCompatActivity implements View.OnClickListener{
+public class NormalPhoneDetialActivity extends Activity implements View.OnClickListener{
     private ImageView iv_back;
     private TextView phoneinfo;
     private ListView phonelistview;

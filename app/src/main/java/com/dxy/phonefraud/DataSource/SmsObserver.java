@@ -1,12 +1,17 @@
 package com.dxy.phonefraud.DataSource;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.dxy.phonefraud.BaseApplication;
 import com.dxy.phonefraud.entity.SmsData;
@@ -33,6 +38,7 @@ public class SmsObserver extends ContentObserver {
     private Handler handler;
     private String result;
     private String smsbody;
+    private Dialog alertDialog;
 
     public SmsObserver(Handler handler, Context context) {
         super(handler);
@@ -76,7 +82,7 @@ public class SmsObserver extends ContentObserver {
                     Thread t = new Thread(new Runnable(){
                         @Override
                         public void run() {
-                            result = getHttp(smsbody,"1");
+                            result = getHttp(smsbody,"0");
                         }
                     });
                     t.start();
@@ -86,23 +92,50 @@ public class SmsObserver extends ContentObserver {
                     e.printStackTrace();
                 }
                 SmsData sms = new SmsData();
-                sms.setSmsnumber(msgAddr.substring(3));
+                sms.setSmsnumber(msgAddr);
                 sms.setSmscontent(msgBody);
                 sms.setSmstime(date);
-                String name = GetCall.queryNameFromContactsByNumber(context, msgAddr.substring(3));
+                String name = GetCall.queryNameFromContactsByNumber(context, msgAddr);
                 if(name != null)
                     sms.setSmsname(name);
+                Log.i("ListenSmsPhone", "观察者 接收到诈骗短信\t");
                 if(result.equals("ok"))
                 {
+                    Toast.makeText(context, "观察者 接收到正常短信", Toast.LENGTH_LONG).show();
                     BaseApplication.addNormalSms(sms);
                 }
                 else
                 {
                     BaseApplication.addFraudSms(sms);
+                //    Context con = AndroidAppHelper.currentApplication().getApplicationContext();
+                    alertDialog = new AlertDialog.Builder(context)
+                            .setTitle("接受到诈骗短信，是否删除？")
+                            .setMessage("您确定删除？")
+                                    // .setIcon(R.drawable.lianxiren)
+                            .setPositiveButton("确定",
+                                    new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface arg0,
+                                                            int arg1) {
+
+                                            alertDialog.cancel();
+                                        }
+                                    })
+                            .setNegativeButton("取消",
+                                    new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface arg0,
+                                                            int arg1) {
+                                            alertDialog.cancel();
+                                        }
+                                    }).create();
+                //    alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                    alertDialog.show();
+                    Toast.makeText(context, "观察者 接收到诈骗短信", Toast.LENGTH_LONG).show();
+
                 }
-
-
-
             }
             cursor.close();
         }

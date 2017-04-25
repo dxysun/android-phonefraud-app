@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by dongx on 2017/4/7.
@@ -51,7 +52,7 @@ public class GetSms {
                     long longDate = cur.getLong(index_Date);
                     int intType = cur.getInt(index_Type);
 
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA);
                     Date d = new Date(longDate);
                     String strDate = dateFormat.format(d);
 

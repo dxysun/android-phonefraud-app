@@ -1,6 +1,8 @@
 package com.dxy.phonefraud;
 
+import android.app.Activity;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,7 +20,7 @@ import com.dxy.phonefraud.fragment.VpFragmentLv;
 
 import java.util.ArrayList;
 
-public class SmsActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener{
+public class SmsActivity extends FragmentActivity implements RadioGroup.OnCheckedChangeListener{
     private ViewPager viewPager;
     private RadioGroup radioGroup;
     private RadioButton fraud_sms,normal_sms;

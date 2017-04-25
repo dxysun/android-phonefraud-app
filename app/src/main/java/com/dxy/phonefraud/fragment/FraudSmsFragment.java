@@ -149,7 +149,7 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
         list = BaseApplication.getFraudsmslist();
         if(list == null)
         {
-            Log.i("phoneFraud-phone  list", " " + list.size());
+            Log.i("phoneFraud-phone  list", "list null ");
             Toast.makeText(getActivity().getApplicationContext(), "数据正在初始化中，请稍候", Toast.LENGTH_LONG).show();
         }
         else

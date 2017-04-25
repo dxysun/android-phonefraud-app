@@ -1,5 +1,6 @@
 package com.dxy.phonefraud;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -14,7 +15,7 @@ import android.widget.TextView;
 
 import com.dxy.phonefraud.entity.SmsData;
 
-public class NormalSmsDetialActivity extends AppCompatActivity implements View.OnClickListener{
+public class NormalSmsDetialActivity extends Activity implements View.OnClickListener{
     private ImageView iv_back;
     private TextView normalsmsinfo;
     private TextView normalsmstime;

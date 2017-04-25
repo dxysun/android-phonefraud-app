@@ -43,7 +43,7 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-public class RecordPhoneDetielActivity extends AppCompatActivity implements View.OnClickListener{
+public class RecordPhoneDetielActivity extends Activity implements View.OnClickListener{
     private String TAG = "RecordPhoneDetielActivityListenText";
     private ImageView iv_back;
     private TextView record_info;

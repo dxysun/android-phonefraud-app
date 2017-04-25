@@ -102,7 +102,7 @@ public class NormalSmsAdapter extends BaseAdapter {
         int type = sdata.getType();
         if(sdata.getSmsname() != null)
         {
-            vh.smsnumber.setText(sdata.getSmsname() + "   " +sdata.getSmsnumber());
+            vh.smsnumber.setText(sdata.getSmsname() + " " +sdata.getSmsnumber());
         }
         else
         {

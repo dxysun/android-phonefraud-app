@@ -1,6 +1,7 @@
 package com.dxy.phonefraud;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -29,7 +30,7 @@ import com.iflytek.cloud.SpeechRecognizer;
 
 import org.litepal.LitePal;
 
-public class Main2Activity extends AppCompatActivity implements View.OnClickListener {
+public class Main2Activity extends Activity implements View.OnClickListener {
     private ImageView iv_setting;
     private ImageButton phone_fraud;
     private ImageButton sms_fraud;
@@ -108,7 +109,7 @@ public class Main2Activity extends AppCompatActivity implements View.OnClickList
         registerReceiver(receiver, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
         mHandler = new Handler();
 
-    //    smsContentObserver = new SmsObserver(mHandler, this);
+     //   smsContentObserver = new SmsObserver(mHandler, this);
     //    getContentResolver().registerContentObserver(Uri.parse("content://sms"), true, smsContentObserver);
  /*        callLogObserver = new CallLogObserver(mHandler, this);
         getContentResolver().registerContentObserver(CallLog.Calls.CONTENT_URI, true, callLogObserver);//等价于【Uri.parse("content://call_log/calls")】

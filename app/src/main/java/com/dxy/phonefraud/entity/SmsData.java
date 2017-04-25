@@ -103,6 +103,7 @@ public class SmsData extends DataSupport implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeLong(id);
+        parcel.writeString(smsid);
         parcel.writeString(smsnumber);
         parcel.writeString(smscontent);
         parcel.writeString(smstime);

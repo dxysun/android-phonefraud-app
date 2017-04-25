@@ -1,10 +1,14 @@
 package com.dxy.phonefraud.listen;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.telephony.SmsMessage;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.dxy.phonefraud.BaseApplication;
@@ -23,10 +27,13 @@ public class SMSReceiver extends BroadcastReceiver {
     public static final String TAG = "ListenSmsPhone";
     private String result;
     private String smsbody;
+    private Dialog alertDialog;
 
     //android.provider.Telephony.Sms.Intents
 
     public static final String SMS_RECEIVED_ACTION = "android.provider.Telephony.SMS_RECEIVED";
+    public SMSReceiver() {
+    }
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(SMS_RECEIVED_ACTION)) {
@@ -62,12 +69,40 @@ public class SMSReceiver extends BroadcastReceiver {
                     sms.setSmsname(name);
                 if(result.equals("ok"))
                 {
+                    Log.i(TAG, "接收者 收到 ok ");
                     BaseApplication.addNormalSms(sms);
                 }
                 else
                 {
-                    Toast.makeText(context, "接收到诈骗短信", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "接收者 接收到诈骗短信", Toast.LENGTH_LONG).show();
                     BaseApplication.addFraudSms(sms);
+                    Log.i(TAG, "接收者 收到 not ok ");
+                    alertDialog = new AlertDialog.Builder(context)
+                            .setTitle("接受到诈骗短信，是否删除？")
+                            .setMessage("您确定删除？")
+                                    // .setIcon(R.drawable.lianxiren)
+                            .setPositiveButton("确定",
+                                    new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface arg0,
+                                                            int arg1) {
+
+                                            alertDialog.cancel();
+                                        }
+                                    })
+                            .setNegativeButton("取消",
+                                    new DialogInterface.OnClickListener() {
+
+                                        @Override
+                                        public void onClick(DialogInterface arg0,
+                                                            int arg1) {
+                                            alertDialog.cancel();
+                                        }
+                                    }).create();
+                    alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                    alertDialog.show();
+
                 }
             }
         }

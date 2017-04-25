@@ -1,7 +1,9 @@
 package com.dxy.phonefraud;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,10 +17,10 @@ import com.dxy.phonefraud.adapter.myFragmentPagerAdapter;
 import com.dxy.phonefraud.fragment.FraudPhoneFragment;
 import com.dxy.phonefraud.fragment.NormalPhoneFragment;
 import com.dxy.phonefraud.fragment.RecordPhoneFragment;
-
+import android.support.v4.app.Fragment;
 import java.util.ArrayList;
 
-public class PhoneActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener,View.OnClickListener{
+public class PhoneActivity extends FragmentActivity implements RadioGroup.OnCheckedChangeListener,View.OnClickListener{
     private ViewPager viewPager;
     private RadioGroup radioGroup;
     private RadioButton fraud_phone,normal_phone,record_phone;
@@ -62,6 +64,7 @@ public class PhoneActivity extends AppCompatActivity implements RadioGroup.OnChe
         alFragment.add(normalPhoneFragment);
         alFragment.add(recordPhoneFragment);
         //ViewPager设置适配器
+     //   getFragmentManager();
         viewPager.setAdapter(new myFragmentPagerAdapter(getSupportFragmentManager(), alFragment));
         //ViewPager显示第一个Fragment
         viewPager.setCurrentItem(0);

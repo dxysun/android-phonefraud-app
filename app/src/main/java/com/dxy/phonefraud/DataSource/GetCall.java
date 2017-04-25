@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by dongx on 2017/4/7.
@@ -49,7 +50,7 @@ public class GetCall {
                 long duration = cursor.getLong(cursor
                         .getColumnIndex(CallLog.Calls.DURATION));
                 strPhone = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
                 Date d = new Date(Long.parseLong(cursor.getString(cursor
                         .getColumnIndex(CallLog.Calls.DATE))));
                 date = dateFormat.format(d);
@@ -84,7 +85,7 @@ public class GetCall {
             }
 
         }catch(SecurityException e){
-
+            e.printStackTrace();
         }
         return phonelist;
 
@@ -110,7 +111,7 @@ public class GetCall {
                 int type = cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE));
     //            long duration = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DURATION));
                 strPhone = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
                 Date d = new Date(Long.parseLong(cursor.getString(cursor.getColumnIndex(CallLog.Calls.DATE))));
                 date = dateFormat.format(d);
                 if(type == CallLog.Calls.INCOMING_TYPE)
@@ -177,7 +178,7 @@ public class GetCall {
                 cursor.close();
             }
         }catch(SecurityException e){
-
+            e.printStackTrace();
         }
 
         return phonemap;
@@ -202,7 +203,7 @@ public class GetCall {
                     name = nameCursor.getString(0);
                 }
             }
-            if (!nameCursor.isClosed()) {
+            if (nameCursor != null && !nameCursor.isClosed()) {
                 nameCursor.close();
             }
         }

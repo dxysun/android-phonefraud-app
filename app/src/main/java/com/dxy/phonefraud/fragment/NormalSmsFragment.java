@@ -120,9 +120,10 @@ public class NormalSmsFragment extends Fragment implements AdapterView.OnItemCli
             smsAdapter = new NormalSmsAdapter(getActivity(),list);
             BaseApplication.setNormalsmsAdapter(smsAdapter);
             lv.setAdapter(smsAdapter);
+            Log.i("phoneFraud-phone  list", " " + list.size());
+
         }
 
-        Log.i("phoneFraud-phone  list", " " + list.size());
 
 
         lv.setOnItemClickListener(this);
