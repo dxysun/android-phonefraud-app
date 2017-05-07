@@ -7,17 +7,20 @@ import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.CallLog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.dxy.phonefraud.DataSource.CallLogObserver;
 import com.dxy.phonefraud.DataSource.SmsObserver;
 import com.dxy.phonefraud.callrecord.CallRecord;
 import com.dxy.phonefraud.callrecord.MyCallRecordReceiver;
+import com.dxy.phonefraud.entity.SmsData;
 import com.dxy.phonefraud.greendao.DaoSession;
 import com.dxy.phonefraud.greendao.FraudPhone;
 import com.dxy.phonefraud.greendao.FraudPhoneDao;
@@ -27,8 +30,15 @@ import com.dxy.phonefraud.listen.SMSReceiver;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.SpeechRecognizer;
+import com.tuenti.smsradar.Sms;
+import com.tuenti.smsradar.SmsListener;
+import com.tuenti.smsradar.SmsRadar;
 
 import org.litepal.LitePal;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Main2Activity extends Activity implements View.OnClickListener {
     private ImageView iv_setting;
@@ -105,9 +115,33 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         callRecord.changeReceiver(new MyCallRecordReceiver(callRecord));
         callRecord.enableSaveFile();
         callRecord.startCallReceiver();
-        SMSReceiver receiver = new SMSReceiver();
-        registerReceiver(receiver, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
-        mHandler = new Handler();
+        SmsRadar.initializeSmsRadarService(this, new SmsListener() {
+            @Override
+            public void onSmsSent(Sms sms) {
+            //    showSmsToast(sms);
+            //    Log.i("ListenSmsPhone",sms.getMsg()+"  "+sms.getDate()+"  "+sms.getAddress()+"  "+sms.getType());
+            //    showSmsToast(sms);
+            }
+
+            @Override
+            public void onSmsReceived(Sms sms) {
+                Log.i("ListenSmsPhone", sms.getMsg() + "  " + sms.getDate() + "  " + sms.getAddress() + "  " + sms.getType());
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+                Date d = new Date(Long.parseLong(sms.getDate()));
+                String date = dateFormat.format(d);
+                SmsData sdata = new SmsData();
+                sdata.setSmstime(date);
+                sdata.setSmscontent(sms.getMsg());
+                sdata.setSmsnumber(sms.getAddress());
+                BaseApplication.addNormalSms(sdata);
+             //   sdata.set
+                showSmsToast(sms);
+            }
+        });
+
+   //     SMSReceiver receiver = new SMSReceiver();
+   //     registerReceiver(receiver, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
+    //    mHandler = new Handler();
 
      //   smsContentObserver = new SmsObserver(mHandler, this);
     //    getContentResolver().registerContentObserver(Uri.parse("content://sms"), true, smsContentObserver);
@@ -115,7 +149,9 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         getContentResolver().registerContentObserver(CallLog.Calls.CONTENT_URI, true, callLogObserver);//等价于【Uri.parse("content://call_log/calls")】
 */
     }
-
+    private void showSmsToast(Sms sms) {
+        Toast.makeText(this, sms.toString(), Toast.LENGTH_LONG).show();
+    }
     @Override
     protected void onDestroy() {
         Log.i("MyService", "mainactivity onDestroy ");

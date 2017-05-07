@@ -17,7 +17,34 @@
         title:small_text_size="@dimen/title_text_small_size"
 
         android:layout_height="50dp"
-        android:clickable="true" />
+        android:clickable="true"
+        android:id="@+id/view" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="#ffffff">
+
+
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="是否开启陌生电话通话录音功能"
+            android:id="@+id/is_record"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:switchPadding="50dp"
+            android:textColor="#050000" />
+    </LinearLayout>
 
 
 </RelativeLayout>

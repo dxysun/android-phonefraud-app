@@ -1,6 +1,7 @@
 package com.dxy.phonefraud.callrecord.receiver;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -77,6 +78,7 @@ public class CallRecordReceiver extends PhoneCallReceiver {
      //   appState.setPhonenumber(number);
         phonenumber = number;
         String name = GetCall.queryNameFromContactsByNumber(context, number);
+
         if(name == null)
         {
             if(NetworkTest.getNetWorkStatus(context) == Constants.NETWORK_CLASS_2_G || NetworkTest.getNetWorkStatus(context) == Constants.NETWORK_CLASS_UNKNOWN)
@@ -144,7 +146,9 @@ public class CallRecordReceiver extends PhoneCallReceiver {
             Log.i(TAG,"onIncomingCallAnswered " + number);
         }
         Log.i(TAG, "onIncomingCallAnswered  isRecordStarted  " + isRecordStarted);
-        if(isRecordStarted)
+        SharedPreferences pref = context.getSharedPreferences("set", context.MODE_PRIVATE);
+        Boolean b = pref.getBoolean("is_record", true);
+        if(isRecordStarted && b)
         {
             Log.i(TAG,"Record   start" );
             CustomTimeToast(context.getApplicationContext(), "录音开始", 10 * 1000);
