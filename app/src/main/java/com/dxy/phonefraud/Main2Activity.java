@@ -28,11 +28,6 @@ import com.dxy.phonefraud.DataSource.SmsObserver;
 import com.dxy.phonefraud.callrecord.CallRecord;
 import com.dxy.phonefraud.callrecord.MyCallRecordReceiver;
 import com.dxy.phonefraud.entity.SmsData;
-import com.dxy.phonefraud.greendao.DaoSession;
-import com.dxy.phonefraud.greendao.FraudPhone;
-import com.dxy.phonefraud.greendao.FraudPhoneDao;
-import com.dxy.phonefraud.greendao.FraudSms;
-import com.dxy.phonefraud.greendao.FraudSmsDao;
 import com.dxy.phonefraud.listen.SMSReceiver;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
@@ -59,13 +54,6 @@ public class Main2Activity extends Activity implements View.OnClickListener {
     private ImageView iv_setting;
     private ImageButton phone_fraud;
     private ImageButton sms_fraud;
-
-    private DaoSession daoSession;
-    private FraudPhoneDao phoneDao;
-    private FraudSmsDao smsDao;
-
-    private CallLogObserver callLogObserver;
-    private SmsObserver smsContentObserver;
 
     private CallRecord callRecord;
     private Handler mHandler;
@@ -94,30 +82,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         Intent intent = new Intent(this, SmsActivity.class);
         mResultIntent = PendingIntent.getActivity(this, 1, intent,
                 0);
-   /*     daoSession = BaseApplication.getInstances().getDaoSession();
-        phoneDao = daoSession.getFraudPhoneDao();
-        smsDao = daoSession.getFraudSmsDao();
-        phoneDao.deleteAll();
-        smsDao.deleteAll();
 
-        FraudPhone phone = new FraudPhone();
-    //    phone.setId(1);
-        phone.setPhonenumber("12345678901");
-        phone.setPhonename("李四");
-        phone.setCalltime("2017-04-09 15:22:45");
-        phone.setType(0);
-        phone.setIsrecord(0);
-        phoneDao.insert(phone);
-        FraudSms sms = new FraudSms();
-   //     sms.setId(1);
-        sms.setType(0);
-        sms.setSmsname("李四");
-        sms.setSmscontent("通过谈话得知该生遇到的问题是对学习逐渐失去兴趣，并把注意力、精力转移到了电子游戏上。" +
-                "该生以前学习成绩算不上优秀但也不差，曾经努力学习过一段时间但由于取得的效果不明显，" +
-                "于是开始逐渐丧失对学习的兴趣和热情，甚至产生负面的消极的情绪，试图通过电子游戏来转移失落感。");
-        sms.setSmsnumber("12345678901");
-        sms.setSmstime("2017-04-09 15:22:45");
-        smsDao.insert(sms);*/
         Thread t = new Thread(new Runnable(){
             @Override
             public void run() {

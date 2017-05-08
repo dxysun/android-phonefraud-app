@@ -24,10 +24,6 @@ import com.dxy.phonefraud.FraudPhoneDetialActivity;
 import com.dxy.phonefraud.R;
 import com.dxy.phonefraud.adapter.FraudPhoneAdapter;
 import com.dxy.phonefraud.entity.PhoneData;
-import com.dxy.phonefraud.greendao.DaoSession;
-import com.dxy.phonefraud.greendao.FraudPhone;
-import com.dxy.phonefraud.greendao.FraudPhoneDao;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,8 +39,6 @@ public class FraudPhoneFragment extends Fragment implements AdapterView.OnItemCl
     private Dialog alertDialog;
     private RelativeLayout longlayout;
     private boolean islong;
-    private DaoSession daoSession;
-    private FraudPhoneDao phoneDao;
 
     public FraudPhoneFragment() {
         // Required empty public constructor

@@ -46,8 +46,6 @@ public class NormalPhoneFragment extends Fragment implements AdapterView.OnItemC
     private RelativeLayout longlayout;
     private boolean islong;
 
-//    private DaoSession daoSession;
-//    private PhoneDao phoneDao;
 
     public NormalPhoneFragment() {
         // Required empty public constructor

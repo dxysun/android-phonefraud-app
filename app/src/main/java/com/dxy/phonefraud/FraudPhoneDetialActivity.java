@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.dxy.phonefraud.adapter.PhoneAdapter;
 import com.dxy.phonefraud.entity.PhoneData;
-import com.dxy.phonefraud.greendao.FraudPhone;
 
 public class FraudPhoneDetialActivity extends AppCompatActivity implements View.OnClickListener{
 

@@ -14,10 +14,6 @@ import com.dxy.phonefraud.adapter.NormalSmsAdapter;
 import com.dxy.phonefraud.adapter.RecordPhoneAdapter;
 import com.dxy.phonefraud.entity.PhoneData;
 import com.dxy.phonefraud.entity.SmsData;
-import com.dxy.phonefraud.greendao.DaoMaster;
-import com.dxy.phonefraud.greendao.DaoSession;
-import com.dxy.phonefraud.greendao.FraudPhone;
-import com.dxy.phonefraud.greendao.FraudPhoneDao;
 import com.iflytek.cloud.SpeechUtility;
 
 import org.litepal.LitePal;
@@ -45,9 +41,7 @@ import okhttp3.Response;
 public class BaseApplication extends Application {
 
     private SQLiteDatabase db;
-    private DaoMaster mDaoMaster;
-    private DaoSession mDaoSession;
-    public static BaseApplication instances;
+
 
     private static NormalPhoneAdapter normalphoneAdapter;
     private static ArrayList<PhoneData> normalphonelist;
@@ -108,23 +102,6 @@ public class BaseApplication extends Application {
         super.onCreate();
         LitePal.initialize(this);
         SpeechUtility.createUtility(BaseApplication.this, "appid=" + getString(R.string.app_id));
-        instances = this;
-        init();
-    }
-
-    public static BaseApplication getInstances() {
-        return instances;
-    }
-
-    public void init() {
-        //数据库的配置
-        DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(instances, "note_db", null);
-        db = devOpenHelper.getWritableDatabase();
-        mDaoMaster = new DaoMaster(db);
-        mDaoSession = mDaoMaster.newSession();
-    }
-    public DaoSession getDaoSession() {
-        return mDaoSession;
     }
 
     public SQLiteDatabase getDb() {
@@ -303,15 +280,6 @@ public class BaseApplication extends Application {
 
 
     public static void addFraudPhone(PhoneData fphone){
-  /*      DaoSession ds = instances.getDaoSession();
-        FraudPhoneDao fphonedao = ds.getFraudPhoneDao();
-        fphonedao.insert(fphone);
-        PhoneData p = new PhoneData();
-        p.setListtype(0);
-        p.setPhonename(fphone.getPhonename());
-        p.setType(0);
-        p.setCalltime(fphone.getCalltime());
-        p.setPhonenumber(fphone.getPhonenumber());*/
     //    fraudphonelist.add(p);
         fphone.setType(0);
         if(fraudphoneAdapter != null)
@@ -322,15 +290,6 @@ public class BaseApplication extends Application {
 
     }
     public static void addNormalPhone(PhoneData phone){
-   /*     DaoSession ds = instances.getDaoSession();
-        FraudPhoneDao fphonedao = ds.getFraudPhoneDao();
-        fphonedao.insert(fphone);
-        PhoneData p = new PhoneData();
-        p.setListtype(0);
-        p.setPhonename(fphone.getPhonename());
-        p.setType(0);
-        p.setCalltime(fphone.getCalltime());
-        p.setPhonenumber(fphone.getPhonenumber());*/
         //    fraudphonelist.add(p);
         phone.setType(1);
         if(normalphoneAdapter != null)
@@ -340,12 +299,6 @@ public class BaseApplication extends Application {
         }
     }
 
-    public static void deletePhone(FraudPhone fphone){
-        DaoSession ds = instances.getDaoSession();
-        FraudPhoneDao fphonedao = ds.getFraudPhoneDao();
-        fphonedao.delete(fphone);
-
-    }
 
     public static void addFraudSms(SmsData sms){
         sms.setType(0);

@@ -25,9 +25,6 @@ import com.dxy.phonefraud.R;
 import com.dxy.phonefraud.FraudSmsDetialActivity;
 import com.dxy.phonefraud.adapter.FraudSmsAdapter;
 import com.dxy.phonefraud.entity.SmsData;
-import com.dxy.phonefraud.greendao.DaoSession;
-import com.dxy.phonefraud.greendao.FraudSms;
-import com.dxy.phonefraud.greendao.FraudSmsDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +36,7 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
     private static final String ARG_PARAM2 = "param2";
     private ListView listView;
 
-    private DaoSession daoSession;
-    private FraudSmsDao smsDao;
+
 
     private Dialog alertDialog;
     private RelativeLayout longlayout;

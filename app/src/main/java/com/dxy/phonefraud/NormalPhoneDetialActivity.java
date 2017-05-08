@@ -18,9 +18,6 @@ import com.dxy.phonefraud.DataSource.GetCall;
 import com.dxy.phonefraud.adapter.PhoneAdapter;
 import com.dxy.phonefraud.entity.PhoneData;
 import com.dxy.phonefraud.entity.SmsData;
-import com.dxy.phonefraud.greendao.DaoSession;
-import com.dxy.phonefraud.greendao.FraudPhone;
-import com.dxy.phonefraud.greendao.FraudPhoneDao;
 import com.dxy.phonefraud.service.MyService;
 
 import java.util.ArrayList;
