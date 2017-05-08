@@ -75,8 +75,6 @@ public class SmsObserver extends ContentObserver {
                 String msgObj = "收件箱\nId：" + msgId + "\n号码：" + msgAddr + "\n内容：" + msgBody + "\n类型：" + msgType + "\n时间：" + date + "\n";
                 handler.sendMessage(Message.obtain(handler, 1, msgObj));
                 Log.i("ListenSmsPhone", "aa--短信数据库发生了变化  内容为\t" + msgObj);
-
-
                 smsbody = msgBody;
                 try{
                     Thread t = new Thread(new Runnable(){
