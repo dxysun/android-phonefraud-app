@@ -230,14 +230,6 @@ public class NormalSmsFragment extends Fragment implements AdapterView.OnItemCli
         }
         else{
 
-            /*      News news = list.get(arg2);
-
-            intent.putExtra("obj", news);
-            Bundle b1 = new Bundle();
-            b1.putString("arg1", "今天七月七");
-            intent.putExtra("bundle", b1);
-
-            startActivity(intent);*/
             Intent intent = new Intent(getActivity(), NormalSmsDetialActivity.class);
             Bundle bundle = new Bundle();
 

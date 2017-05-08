@@ -39,8 +39,6 @@
         <!-- <activity android:name=".Main2Activity" /> -->
         <activity android:name=".PhoneActivity" />
         <activity android:name=".SmsActivity" />
-        <activity android:name=".IntentActivity" />
-        <activity android:name=".ListViewActivity" />
         <activity android:name=".SetActivity" />
         <activity android:name=".FraudPhoneDetialActivity" />
         <activity android:name=".FraudSmsDetialActivity" />

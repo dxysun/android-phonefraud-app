@@ -16,7 +16,6 @@ import com.dxy.phonefraud.fragment.FraudPhoneFragment;
 import com.dxy.phonefraud.fragment.FraudSmsFragment;
 import com.dxy.phonefraud.fragment.NormalPhoneFragment;
 import com.dxy.phonefraud.fragment.NormalSmsFragment;
-import com.dxy.phonefraud.fragment.VpFragmentLv;
 
 import java.util.ArrayList;
 
@@ -53,7 +52,6 @@ public class SmsActivity extends FragmentActivity implements RadioGroup.OnChecke
     private void initViewPager(){
         FraudSmsFragment fraudPhoneFragment=new FraudSmsFragment();
         NormalSmsFragment normalPhoneFragment=new NormalSmsFragment();
-     //   VpFragmentLv normalPhoneFragment = new VpFragmentLv();
         alFragment=new ArrayList<>();
         alFragment.add(fraudPhoneFragment);
         alFragment.add(normalPhoneFragment);

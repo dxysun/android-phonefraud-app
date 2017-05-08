@@ -87,11 +87,7 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_fraud_sms, container, false);
-/*        View view = inflater.inflate(R.layout.lay4,container,false);
-        listView = (ListView) view.findViewById(R.id.mylistview);
-        list = getdata();
-        adapter = new MyListViewAdapter(getActivity(),list);
-        listView.setAdapter(adapter);
+/*
 
         //listView滑动状态判断
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -269,14 +265,7 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
         }
         else{
 
-            /*      News news = list.get(arg2);
 
-            intent.putExtra("obj", news);
-            Bundle b1 = new Bundle();
-            b1.putString("arg1", "今天七月七");
-            intent.putExtra("bundle", b1);
-
-            startActivity(intent);*/
             Intent intent = new Intent(getActivity(), FraudSmsDetialActivity.class);
             Bundle bundle = new Bundle();
 

@@ -3,7 +3,6 @@ package com.dxy.phonefraud.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dxy.phonefraud.R;
-import com.dxy.phonefraud.entity.News;
 import com.dxy.phonefraud.entity.PhoneData;
 
 import java.util.HashMap;

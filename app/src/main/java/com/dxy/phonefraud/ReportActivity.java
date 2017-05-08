@@ -34,8 +34,6 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
                 ReportActivity.this.finish();
                 break;
             case R.id.reportButton:
-                //    Intent intent = new Intent(this,SettingsActivity.class);
-                //    startActivity(intent);
                 break;
 
             default:
