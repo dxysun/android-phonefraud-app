@@ -302,9 +302,11 @@ public class BaseApplication extends Application {
 
     public static void addFraudSms(SmsData sms){
         sms.setType(0);
+        Log.i("ListenSmsPhone", "addFraudSms fraudsmsAdapter");
         if(fraudsmsAdapter != null)
         {
             //  fraudphoneAdapter.notifyDataSetChanged();
+            Log.i("ListenSmsPhone", "addFraudSms update");
             fraudsmsAdapter.add(sms);
         }
     }

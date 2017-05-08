@@ -37,7 +37,6 @@ public class CallRecord {
     private CallRecord(Context context) {
 
         this.mContext = context;
-        //this.mCallRecordReceiver = new CallRecordReceiver();
     }
 
     public static CallRecord initReceiver(Context context) {

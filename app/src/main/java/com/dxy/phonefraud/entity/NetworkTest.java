@@ -117,7 +117,7 @@ public class NetworkTest {
         } catch (InterruptedException e) {
             result = "InterruptedException";
         } finally {
-            Log.i("CallRecordReceiver", "----result---" + "result = " + result);
+            Log.i("CallRecord", "----result---" + "result = " + result);
         }
         return false;
     }

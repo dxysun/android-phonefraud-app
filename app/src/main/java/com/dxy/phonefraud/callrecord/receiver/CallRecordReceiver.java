@@ -1,19 +1,39 @@
 package com.dxy.phonefraud.callrecord.receiver;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.media.RingtoneManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.dxy.phonefraud.BaseApplication;
 import com.dxy.phonefraud.DataSource.GetCall;
+import com.dxy.phonefraud.R;
 import com.dxy.phonefraud.callrecord.CallRecord;
+import com.dxy.phonefraud.callrecord.PhoneListener;
+import com.dxy.phonefraud.callrecord.PhoneReceive;
 import com.dxy.phonefraud.callrecord.helper.PrefsHelper;
 import com.dxy.phonefraud.entity.Constants;
 import com.dxy.phonefraud.entity.NetworkTest;
+import com.dxy.phonefraud.listen.RecordToText;
+import com.dxy.phonefraud.speechtotext.JsonParser;
+import com.iflytek.cloud.RecognizerListener;
+import com.iflytek.cloud.RecognizerResult;
+import com.iflytek.cloud.SpeechError;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -22,12 +42,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import okhttp3.Call;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -55,6 +79,14 @@ public class CallRecordReceiver extends PhoneCallReceiver {
     private  static Toast toast = null;
     private  static Timer timer = null;
     private  static Timer time1 = null;
+
+
+    private Context context;
+    private Notification mNotification;
+    private NotificationManager mNotificationManager;
+    private PendingIntent mResultIntent;
+
+
  //   private RecordTask recordertask;
   public CallRecordReceiver( ) {
 
@@ -66,6 +98,8 @@ public class CallRecordReceiver extends PhoneCallReceiver {
     @Override
     protected void onIncomingCallReceived(Context context, String number, Date start) {
         //    startRecord(context, "incoming", number);
+        this.context = context;
+        PhoneReceive.phoneListener.onIncomingCallReceived(context, number, start);
         if(number == null)
         {
             Log.i(TAG,"onIncomingCallReceived  empty");
@@ -105,15 +139,15 @@ public class CallRecordReceiver extends PhoneCallReceiver {
                 }
                 if(result.equals("ok"))
                 {
-                    Log.i(TAG, "RINGING :" + "result grt ok");
-                    //  Toast.makeText(context.getApplicationContext(), "诈骗电话，请及时挂断", Toast.LENGTH_LONG).show();
-                    CustomTimeToast(context.getApplicationContext(), "诈骗电话，请及时挂断", 30 * 1000);
+                    Log.i(TAG, "RINGING  :" + "result ok");
+                    isRecordStarted = true;
+                    Toast.makeText(context.getApplicationContext(), "未知状态的陌生电话，已开启通话录音", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
-                    Log.i(TAG, "RINGING  :" + "no result");
-                    isRecordStarted = true;
-                    Toast.makeText(context.getApplicationContext(), "no result RINGING " + phonenumber, Toast.LENGTH_LONG).show();
+                    Log.i(TAG, "RINGING :" + "result get not ok");
+                    //  Toast.makeText(context.getApplicationContext(), "诈骗电话，请及时挂断", Toast.LENGTH_LONG).show();
+                    CustomTimeToast(context.getApplicationContext(), "诈骗电话，请及时挂断", 30 * 1000);
                 }
                 Log.i(TAG, "RINGING :" + phonenumber);
             }
@@ -124,16 +158,6 @@ public class CallRecordReceiver extends PhoneCallReceiver {
     @Override
     protected void onIncomingCallAnswered(Context context, String number, Date start) {
         //    startRecord(context, "incoming", number);
-        if(number == null)
-        {
-            number = phonenumber;
-            Log.i(TAG,"incomingnumber " +phonenumber );
-        }
-        else
-        {
-            Log.i(TAG,"incomingnumber   " + number);
-        }
-
         cancelToast();
 
         if(number == null)
@@ -145,6 +169,7 @@ public class CallRecordReceiver extends PhoneCallReceiver {
         {
             Log.i(TAG,"onIncomingCallAnswered " + number);
         }
+        PhoneReceive.phoneListener.onIncomingCallAnswered(context,number,start);
         Log.i(TAG, "onIncomingCallAnswered  isRecordStarted  " + isRecordStarted);
         SharedPreferences pref = context.getSharedPreferences("set", context.MODE_PRIVATE);
         Boolean b = pref.getBoolean("is_record", true);
@@ -164,6 +189,17 @@ public class CallRecordReceiver extends PhoneCallReceiver {
     protected void onIncomingCallEnded(Context context, String number, Date start, Date end) {
         stopRecord(context);
         cancelToast();
+        String path = audiofile.getAbsolutePath();
+        if(number == null)
+        {
+            number = phonenumber;
+            Log.i(TAG,"onIncomingCallAnswered:" +phonenumber );
+        }
+        else
+        {
+            Log.i(TAG,"onIncomingCallAnswered " + number);
+        }
+        PhoneReceive.phoneListener.onIncomingCallEnded(context,number,start,end,isRecordStarted,path);
     }
 
     @Override
@@ -252,7 +288,6 @@ public class CallRecordReceiver extends PhoneCallReceiver {
         }
         return result;
     }
-
 
     public  void CustomTimeToast(Context context,String text,int t) {
         toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
@@ -391,6 +426,5 @@ public class CallRecordReceiver extends PhoneCallReceiver {
         }
 
     }
-
 
 }

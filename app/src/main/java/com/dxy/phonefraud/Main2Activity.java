@@ -2,11 +2,16 @@ package com.dxy.phonefraud;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
@@ -19,6 +24,7 @@ import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -27,20 +33,32 @@ import com.dxy.phonefraud.DataSource.CallLogObserver;
 import com.dxy.phonefraud.DataSource.SmsObserver;
 import com.dxy.phonefraud.callrecord.CallRecord;
 import com.dxy.phonefraud.callrecord.MyCallRecordReceiver;
+import com.dxy.phonefraud.callrecord.PhoneListener;
+import com.dxy.phonefraud.callrecord.PhoneReceive;
+import com.dxy.phonefraud.entity.PhoneData;
 import com.dxy.phonefraud.entity.SmsData;
+import com.dxy.phonefraud.listen.RecordToText;
 import com.dxy.phonefraud.listen.SMSReceiver;
+import com.dxy.phonefraud.speechtotext.JsonParser;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
+import com.iflytek.cloud.RecognizerListener;
+import com.iflytek.cloud.RecognizerResult;
+import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechRecognizer;
 import com.tuenti.smsradar.Sms;
 import com.tuenti.smsradar.SmsListener;
 import com.tuenti.smsradar.SmsRadar;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.litepal.LitePal;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 
 import okhttp3.Call;
@@ -62,7 +80,16 @@ public class Main2Activity extends Activity implements View.OnClickListener {
 
     private Notification mNotification;
     private NotificationManager mNotificationManager;
-    private PendingIntent mResultIntent;
+    private PendingIntent smsResultIntent;
+    private PendingIntent phoneResultIntent;
+
+    private Dialog alertDialog;
+    private static HashMap<String, String> mIatResults = new LinkedHashMap<String, String>();
+    private String record_result;
+    private String phone_result;
+    private String call_time;
+    private String record_number;
+    private String record_path;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +107,11 @@ public class Main2Activity extends Activity implements View.OnClickListener {
          * 取得PendingIntent， 并设置跳转到的Activity，
          */
         Intent intent = new Intent(this, SmsActivity.class);
-        mResultIntent = PendingIntent.getActivity(this, 1, intent,
+        smsResultIntent = PendingIntent.getActivity(this, 1, intent,
+                0);
+
+        Intent intentphone = new Intent(this, PhoneActivity.class);
+        phoneResultIntent = PendingIntent.getActivity(this, 1, intentphone,
                 0);
 
         Thread t = new Thread(new Runnable(){
@@ -95,7 +126,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         });
         t.start();
 
-
+/*
         callRecord = new CallRecord.Builder(this)
                 .setRecordFileName("PhoneCallRecorder")
                 .setRecordDirName("CallRecorder")
@@ -104,7 +135,37 @@ public class Main2Activity extends Activity implements View.OnClickListener {
 
         callRecord.changeReceiver(new MyCallRecordReceiver(callRecord));
         callRecord.enableSaveFile();
-        callRecord.startCallReceiver();
+        callRecord.startCallReceiver();*/
+        PhoneReceive.startPhoneListen(this, new PhoneListener() {
+            @Override
+            public void onIncomingCallEnded(Context context, String number, Date start, Date end,boolean isRecordStarted,String path) {
+
+                SharedPreferences pref = context.getSharedPreferences("set", context.MODE_PRIVATE);
+                Boolean b = pref.getBoolean("is_record", true);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+
+                call_time = dateFormat.format(end);
+                record_number = number;
+                record_path = path;
+                Log.i("ListenSmsPhone", "onIncomingCallEnded，号码" + number +"时间为： "+call_time);
+                if(isRecordStarted && b && number != null && path != null)
+                {
+                    path = "/storage/emulated/0/CallRecorder/CallRecorder.pcm";
+                    Log.i("ListenSmsPhone", "开始识别录音 " );
+                    RecordToText.getRecognizeResult(context, path, number, mRecognizerListener);
+                }
+            }
+
+            @Override
+            public void onIncomingCallAnswered(Context context, String number, Date start) {
+                Log.i("ListenSmsPhone", "onIncomingCallAnswered，号码" + number );
+            }
+
+            @Override
+            public void onIncomingCallReceived(Context context, String number, Date start) {
+                Log.i("ListenSmsPhone", "onIncomingCallReceived，号码" + number );
+            }
+        });
         SmsRadar.initializeSmsRadarService(this, new SmsListener() {
             @Override
             public void onSmsSent(Sms sms) {
@@ -136,14 +197,21 @@ public class Main2Activity extends Activity implements View.OnClickListener {
                 sdata.setSmsnumber(sms.getAddress());
                 if(result.equals("ok"))
                 {
+                    Log.i("ListenSmsPhone", "addNormalSms ");
                     BaseApplication.addNormalSms(sdata);
                     //Toast.makeText(Main2Activity.this, "观察者 接收到正常短信", Toast.LENGTH_LONG).show();
                 }
                 else
                 {
                     Toast.makeText(Main2Activity.this, "您接收到诈骗短信，请注意防范短信诈骗", Toast.LENGTH_LONG).show();
+                    Log.i("ListenSmsPhone", "addFraudSms ");
                     BaseApplication.addFraudSms(sdata);
-                    setNotification();
+                    String Ticker = "接收到诈骗短信";
+                    String title = "短信诈骗";
+                    String contentTitle = "您接收到诈骗短信，请注意防范短信诈骗";
+                    int id = 0;
+                    setNotification(Ticker,title,contentTitle,smsResultIntent,id);
+
                 }
        //         showSmsToast(sms);
             }
@@ -165,7 +233,8 @@ public class Main2Activity extends Activity implements View.OnClickListener {
     @Override
     protected void onDestroy() {
         Log.i("MyService", "mainactivity onDestroy ");
-        callRecord.stopCallReceiver();
+    //    callRecord.stopCallReceiver();
+        PhoneReceive.stopPhoneListen(this);
         super.onDestroy();
     }
     //用Activity实现OnClickListener接口
@@ -214,7 +283,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         }
         return s;
     }
-    public void setNotification(){
+    public void setNotification(String Ticker,String Title,String  ContentText,PendingIntent resultIntent,int id){
         Bitmap largeIcon = BitmapFactory.decodeResource(
                 Main2Activity.this.getResources(), R.drawable.anitfraud);
 
@@ -224,13 +293,13 @@ public class Main2Activity extends Activity implements View.OnClickListener {
                         // 设置小图标
                 .setSmallIcon(R.drawable.ic_launcher)
                         // 设置状态栏文本标题
-                .setTicker("接收到诈骗短信")
+                .setTicker(Ticker)
                         // 设置标题
-                .setContentTitle("短信诈骗")
+                .setContentTitle(Title)
                         // 设置内容
-                .setContentText("您接收到诈骗短信，请注意防范短信诈骗")
+                .setContentText(ContentText)
                         // 设置ContentIntent
-                .setContentIntent(mResultIntent)
+                .setContentIntent(resultIntent)
                         // 设置Notification提示铃声为系统默认铃声
                 .setSound(
                         RingtoneManager.getActualDefaultRingtoneUri(
@@ -238,7 +307,145 @@ public class Main2Activity extends Activity implements View.OnClickListener {
                                 RingtoneManager.TYPE_NOTIFICATION))
                         // 点击Notification的时候使它自动消失
                 .setAutoCancel(true).build();
-        mNotificationManager.notify(0, mNotification);
+        mNotificationManager.notify(id, mNotification);
     }
+    /**
+     * 听写监听器。
+     */
+    private RecognizerListener mRecognizerListener = new RecognizerListener() {
+
+        @Override
+        public void onBeginOfSpeech() {
+            // 此回调表示：sdk内部录音机已经准备好了，用户可以开始语音输入
+            //    showTip("开始说话");
+        }
+
+        @Override
+        public void onError(SpeechError error) {
+            // Tips：
+            // 错误码：10118(您没有说话)，可能是录音机权限被禁，需要提示用户打开应用的录音权限。
+            // 如果使用本地功能（语记）需要提示用户开启语记的录音权限。
+            //    showTip(error.getPlainDescription(true));
+        }
+
+        @Override
+        public void onEndOfSpeech() {
+            // 此回调表示：检测到了语音的尾端点，已经进入识别过程，不再接受语音输入
+            //       showTip("结束说话");
+        }
+
+        @Override
+        public void onResult(RecognizerResult results, boolean isLast) {
+            //         Log.d(TAG, results.getResultString());
+            record_result = printResult(results);
+
+            if (isLast) {
+                // TODO 最后的结果
+                Log.i("ListenSmsPhone", "识别结束 结果为 "+ record_result );
+                try{
+                    Thread t = new Thread(new Runnable(){
+                        @Override
+                        public void run() {
+                            phone_result = postHttp(record_result, "0");
+                        }
+                    });
+                    t.start();
+                    t.join();
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+                if(phone_result.equals("ok"))
+                {
+                    //   BaseApplication.addNormalSms(sdata);
+                    Log.i("ListenSmsPhone", "识别结束 结果为正常 ");
+//                    Toast.makeText(Main2Activity.this, "观察者 接收到正常短信", Toast.LENGTH_LONG).show();
+                    PhoneData pdata1 = new PhoneData();
+                    pdata1.setRecordpath(record_path);
+                    pdata1.setIsrecord(1);
+                    pdata1.setPhonenumber(record_number);
+                    pdata1.setCalltime(call_time);
+                    BaseApplication.addNormalPhone(pdata1);
+                }
+                else
+                {
+                    Log.i("ListenSmsPhone", "识别结束 结果为不正常 ");
+                    Toast.makeText(Main2Activity.this, "您接收到诈骗电话，请注意防范电话诈骗", Toast.LENGTH_LONG).show();
+                    //     BaseApplication.addFraudSms(sdata);
+                    String Ticker = "接收到诈骗电话";
+                    String title = "电话诈骗";
+                    String contentTitle = "您刚刚接听的电话可能为诈骗电话，请注意防范电话诈骗";
+                    int id = 1;
+                    PhoneData pdata = new PhoneData();
+                    pdata.setRecordpath(record_path);
+                    pdata.setIsrecord(1);
+                    pdata.setPhonenumber(record_number);
+                    pdata.setCalltime(call_time);
+                    BaseApplication.addFraudPhone(pdata);
+                    setNotification(Ticker, title, contentTitle, phoneResultIntent, id);
+                }
+            }
+        }
+
+        @Override
+        public void onVolumeChanged(int volume, byte[] data) {
+            //    showTip("当前正在说话，音量大小：" + volume);
+            ///     Log.d(TAG, "返回音频数据："+data.length);
+        }
+
+        @Override
+        public void onEvent(int eventType, int arg1, int arg2, Bundle obj) {
+            // 以下代码用于获取与云端的会话id，当业务出错时将会话id提供给技术支持人员，可用于查询会话日志，定位出错原因
+            // 若使用本地能力，会话id为null
+            //	if (SpeechEvent.EVENT_SESSION_ID == eventType) {
+            //		String sid = obj.getString(SpeechEvent.KEY_EVENT_SESSION_ID);
+            //		Log.d(TAG, "session id =" + sid);
+            //	}
+        }
+    };
+    private String printResult(RecognizerResult results) {
+        String text = JsonParser.parseIatResult(results.getResultString());
+
+        String sn = null;
+        // 读取json结果中的sn字段
+        try {
+            JSONObject resultJson = new JSONObject(results.getResultString());
+            sn = resultJson.optString("sn");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        mIatResults.put(sn, text);
+
+        StringBuffer resultBuffer = new StringBuffer();
+        for (String key : mIatResults.keySet()) {
+            resultBuffer.append(mIatResults.get(key));
+        }
+        Log.i("result", resultBuffer.toString());
+        return resultBuffer.toString();
+        //      record_text.setText(resultBuffer.toString());
+        //    mResultText.setSelection(mResultText.length());
+    }
+    public String postHttp(String msgBody,String type){
+        OkHttpClient okHttpClient = new OkHttpClient();
+        FormBody.Builder fromBodyBuilder = new FormBody.Builder();
+        RequestBody requestBody = fromBodyBuilder.add("sms", msgBody).add("type", type).build();
+        Request.Builder requestBuilder = new Request.Builder();
+        Request request = requestBuilder.url("http://dxysun.com:8001/spark/testsms/").post(requestBody).build();
+
+        Call call = okHttpClient.newCall(request);
+
+        String s = "nonetwork";
+        Log.i("ListenSmsPhone", "start  request");
+        try {
+            Response response = call.execute();     //同步
+            s = response.body().string();
+            Log.i("ListenSmsPhone", "result  :" + s);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return s;
+    }
+
 
 }

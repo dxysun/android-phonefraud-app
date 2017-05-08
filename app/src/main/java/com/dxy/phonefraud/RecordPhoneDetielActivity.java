@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dxy.phonefraud.entity.PhoneData;
+import com.dxy.phonefraud.listen.RecordToText;
 import com.dxy.phonefraud.speechtotext.FucUtil;
 import com.dxy.phonefraud.speechtotext.JsonParser;
 import com.iflytek.cloud.ErrorCode;
@@ -217,8 +218,9 @@ public class RecordPhoneDetielActivity extends Activity implements View.OnClickL
                 alertDialog.show();
                 break;
             case R.id.record_to_text:
-                Log.i("MscSpeechLog","RecognizeClick() ");
-                RecognizeClick();
+                Log.i("MscSpeechLog", "RecognizeClick() ");
+             //   RecognizeClick();
+                RecordToText.getRecognizeResult(this,"/storage/emulated/0/CallRecorder/CallRecorder.pcm",phone.getPhonenumber(),mRecognizerListener);
                 break;
             case R.id.playButton:
                 if(isPlay){
@@ -387,7 +389,7 @@ public class RecordPhoneDetielActivity extends Activity implements View.OnClickL
         @Override
         public void onBeginOfSpeech() {
             // 此回调表示：sdk内部录音机已经准备好了，用户可以开始语音输入
-            showTip("开始说话");
+        //    showTip("开始说话");
         }
 
         @Override
@@ -401,7 +403,7 @@ public class RecordPhoneDetielActivity extends Activity implements View.OnClickL
         @Override
         public void onEndOfSpeech() {
             // 此回调表示：检测到了语音的尾端点，已经进入识别过程，不再接受语音输入
-            showTip("结束说话");
+        //    showTip("结束说话");
         }
 
         @Override
@@ -411,6 +413,7 @@ public class RecordPhoneDetielActivity extends Activity implements View.OnClickL
 
             if (isLast) {
                 // TODO 最后的结果
+            //    record_text.setText(s);
             }
         }
 
@@ -454,6 +457,7 @@ public class RecordPhoneDetielActivity extends Activity implements View.OnClickL
             resultBuffer.append(mIatResults.get(key));
         }
         Log.i("result", resultBuffer.toString());
+
         record_text.setText(resultBuffer.toString());
     //    mResultText.setSelection(mResultText.length());
     }

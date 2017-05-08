@@ -3,6 +3,7 @@ package com.dxy.phonefraud.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,6 +134,7 @@ public class FraudSmsAdapter extends BaseAdapter {
             }
         });
         initDate();
+        Log.i("ListenSmsPhone", "addFraudSms notifyDataSetChanged");
         notifyDataSetChanged();
     }
     public void remove(int position) {
