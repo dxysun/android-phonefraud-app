@@ -216,7 +216,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
     }
     public void setNotification(){
         Bitmap largeIcon = BitmapFactory.decodeResource(
-                Main2Activity.this.getResources(), R.drawable.ic_launcher);
+                Main2Activity.this.getResources(), R.drawable.anitfraud);
 
         mNotification = new NotificationCompat.Builder(getBaseContext())
                 // 设置大图标
