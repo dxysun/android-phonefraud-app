@@ -60,6 +60,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.Call;
 import okhttp3.FormBody;
@@ -90,6 +92,10 @@ public class Main2Activity extends Activity implements View.OnClickListener {
     private String call_time;
     private String record_number;
     private String record_path;
+
+    private  static Toast toast = null;
+    private  static Timer timer = null;
+    private  static Timer time1 = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,12 +113,10 @@ public class Main2Activity extends Activity implements View.OnClickListener {
          * 取得PendingIntent， 并设置跳转到的Activity，
          */
         Intent intent = new Intent(this, SmsActivity.class);
-        smsResultIntent = PendingIntent.getActivity(this, 1, intent,
-                0);
+        smsResultIntent = PendingIntent.getActivity(this, 1, intent, 0);
 
         Intent intentphone = new Intent(this, PhoneActivity.class);
-        phoneResultIntent = PendingIntent.getActivity(this, 1, intentphone,
-                0);
+        phoneResultIntent = PendingIntent.getActivity(this, 1, intentphone, 0);
 
         Thread t = new Thread(new Runnable(){
             @Override
@@ -370,11 +374,12 @@ public class Main2Activity extends Activity implements View.OnClickListener {
                 else
                 {
                     Log.i("ListenSmsPhone", "识别结束 结果为不正常 ");
-                    Toast.makeText(Main2Activity.this, "您接收到诈骗电话，请注意防范电话诈骗", Toast.LENGTH_LONG).show();
+               //     Toast.makeText(Main2Activity.this, "您刚刚接听的电话含有诈骗内容，请注意防范电话诈骗", Toast.LENGTH_LONG).show();
+                    CustomTimeToast(getApplicationContext(),  "您刚刚接听的电话含有诈骗内容，请注意防范电话诈骗", 10 * 1000);
                     //     BaseApplication.addFraudSms(sdata);
                     String Ticker = "接收到诈骗电话";
                     String title = "电话诈骗";
-                    String contentTitle = "您刚刚接听的电话可能为诈骗电话，请注意防范电话诈骗";
+                    String contentTitle = "您刚刚接听的电话含有诈骗内容，请注意防范电话诈骗";
                     int id = 1;
                     PhoneData pdata = new PhoneData();
                     pdata.setRecordpath(record_path);
@@ -447,5 +452,22 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         return s;
     }
 
-
+    public  void CustomTimeToast(Context context,String text,int t) {
+        toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                toast.show();
+            }
+        }, 0, 10);             // 3000表示点击按钮之后，Toast延迟3000ms后显示
+        time1 = new Timer();
+        time1.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                toast.cancel();
+                timer.cancel();
+            }
+        }, t);            // 5000表示Toast显示时间为5秒
+    }
 }

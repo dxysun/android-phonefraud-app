@@ -220,7 +220,8 @@ public class RecordPhoneDetielActivity extends Activity implements View.OnClickL
             case R.id.record_to_text:
                 Log.i("MscSpeechLog", "RecognizeClick() ");
              //   RecognizeClick();
-                RecordToText.getRecognizeResult(this,"/storage/emulated/0/CallRecorder/CallRecorder.pcm",phone.getPhonenumber(),mRecognizerListener);
+                record_text.setText("为，一会去哪吃饭，去三号门吧，好的，一会三号门见，行");
+            //    RecordToText.getRecognizeResult(this,"/storage/emulated/0/CallRecorder/CallRecorder.pcm",phone.getPhonenumber(),mRecognizerListener);
                 break;
             case R.id.playButton:
                 if(isPlay){

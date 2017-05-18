@@ -21,10 +21,9 @@ public class PhoneData extends DataSupport implements Parcelable {
 
     public PhoneData(){
     }
-    public PhoneData(String phoneid,String phonenumber,String phonename,String calltime,int listtype){
+    public PhoneData(String phoneid,String phonenumber,String calltime,int listtype){
         this.phoneid = phoneid;
         this.calltime = calltime;
-        this.phonename = phonename;
         this.phonenumber = phonenumber;
         this.listtype = listtype;
     }

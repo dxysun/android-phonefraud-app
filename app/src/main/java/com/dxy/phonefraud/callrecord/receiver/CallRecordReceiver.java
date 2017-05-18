@@ -141,7 +141,8 @@ public class CallRecordReceiver extends PhoneCallReceiver {
                 {
                     Log.i(TAG, "RINGING  :" + "result ok");
                     isRecordStarted = true;
-                    Toast.makeText(context.getApplicationContext(), "未知状态的陌生电话，已开启通话录音", Toast.LENGTH_SHORT).show();
+                    CustomTimeToast(context.getApplicationContext(), "未知状态的陌生电话，已开启通话录音", 5 * 1000);
+                //    Toast.makeText(context.getApplicationContext(), "未知状态的陌生电话，已开启通话录音", Toast.LENGTH_LONG).show();
                 }
                 else
                 {

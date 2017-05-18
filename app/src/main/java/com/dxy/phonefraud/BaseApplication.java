@@ -58,7 +58,12 @@ public class BaseApplication extends Application {
 
     private static NormalSmsAdapter normalsmsAdapter;
     private static List<SmsData> normalsmslist;
-
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        LitePal.initialize(this);
+        SpeechUtility.createUtility(BaseApplication.this, "appid=" + getString(R.string.app_id));
+    }
     public static List<SmsData> getNormalsmslist() {
         return normalsmslist;
     }
@@ -82,11 +87,19 @@ public class BaseApplication extends Application {
     }
 
     public static void setFraudsmslist() {
-        String content = "通过谈话得知该生遇到的问题是对学习逐渐失去兴趣，并把注意力、精力转移到了电子游戏上。" +
-                "该生以前学习成绩算不上优秀但也不差，曾经努力学习过一段时间但由于取得的效果不明显，" +
-                "于是开始逐渐丧失对学习的兴趣和热情，甚至产生负面的消极的情绪，试图通过电子游戏来转移失落感。";
+        String content = "恭喜您！浙江卫视《中国好声音》第三季栏目开播以来受到全国观众的观看和热爱，" +
+                "为了答谢全国观众的大力支持特举办全国手机用户抽奖活动。您的手机号码很幸运被场外抽奖抽中，" +
+                "将获得赞助商苹果笔记本电脑一台及奖金11800元人民币！请您登陆http://hsxzuk.com确认领奖，" +
+                "领奖码2384.工作人员将在确认领奖起24小时内联系您并将奖品邮寄给您。请您尽快确认领奖 谢谢！";
+        String content1 = "尊敬的手机用户您好！您已被湖南卫视《爸爸去哪儿》栏目组真情回馈活动抽取为场外幸运号，" +
+                "将获得由999感冒灵与小儿感冒药联合赞助的梦想基金98000元人民币（RMB）" +
+                "与苹果MacBook Pro笔记本电脑一台，您的验证码为【5898】，详情请登陆官方活动" +
+                "网站:www.babaac.com填写邮寄地址及时领取。注：如将个人领奖信息泄露给他人" +
+                "造成冒名领取本台概不负责。【湖南卫视】";
         fraudsmslist = new ArrayList<>();
-        fraudsmslist.add(new SmsData("110", "66666", "2017-04-14", content, 0));
+        fraudsmslist.add(new SmsData("111", "18205147449", "2017-05-08 20:58:31", content1, 0));
+        fraudsmslist.add(new SmsData("110", "1069674936730", "2017-04-14 13:34:45", content, 0));
+
     }
 
     public static FraudSmsAdapter getFraudsmsAdapter() {
@@ -97,12 +110,7 @@ public class BaseApplication extends Application {
         BaseApplication.fraudsmsAdapter = fraudsmsAdapter;
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        LitePal.initialize(this);
-        SpeechUtility.createUtility(BaseApplication.this, "appid=" + getString(R.string.app_id));
-    }
+
 
     public SQLiteDatabase getDb() {
         return db;
@@ -122,13 +130,18 @@ public class BaseApplication extends Application {
 
     public static void setRecoredphonelist() {
         recoredphonelist = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            PhoneData  p =   new PhoneData("110","999999" + i, "张三", "2017-04-"+ i,0);
+        PhoneData  p =   new PhoneData("110","67443", "2017-05-08 22:32:34",0);
+        p.setIsrecord(1);
+        p.setListtype(3);
+        p.setRecordpath("/storage/emulated/0/CallRecorder/CallRecorder.pcm");
+        recoredphonelist.add(p);
+     /*   for (int i = 0; i < 5; i++) {
+            PhoneData  p =   new PhoneData("110","1346775885" + i, "张三", "2017-04-"+ i,0);
             p.setIsrecord(1);
             p.setListtype(3);
             p.setRecordpath("/storage/emulated/0/CallRecorder/CallRecorder.pcm");
             recoredphonelist.add(p);
-        }
+        }*/
     }
 
     public static FraudPhoneAdapter getFraudphoneAdapter() {
@@ -178,8 +191,8 @@ public class BaseApplication extends Application {
 
         fraudphonelist = new ArrayList<>();
         PhoneData phone = new PhoneData();
-        phone.setPhonenumber("12345678901");
-        phone.setPhonename("李四");
+        phone.setPhonenumber("18631266315");
+    //    phone.setPhonename("李四");
         phone.setCalltime("2017-04-09 15:22:45");
         phone.setType(0);
         phone.setIsrecord(0);
