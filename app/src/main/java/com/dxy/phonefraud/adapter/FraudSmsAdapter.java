@@ -37,6 +37,14 @@ public class FraudSmsAdapter extends BaseAdapter {
 
     public FraudSmsAdapter(FragmentActivity fragmentActivity, List<SmsData> list) {
         // TODO Auto-generated constructor stub
+        if (list != null)
+        {
+            Collections.sort(list, new Comparator<SmsData>() {
+                public int compare(SmsData arg0, SmsData arg1) {
+                    return arg1.getSmstime().compareTo(arg0.getSmstime());
+                }
+            });
+        }
         this.list = list;
         this.activity = fragmentActivity;
         inflater = (LayoutInflater) fragmentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -45,7 +53,7 @@ public class FraudSmsAdapter extends BaseAdapter {
         initDate();
     }
     // 初始化isSelectedMap的数据
-    private void initDate() {
+    public void initDate() {
         for (int i = 0; i < list.size(); i++) {
             getIsSelectedMap().put(i, false);
             getIsvisibleMap().put(i, CheckBox.GONE);

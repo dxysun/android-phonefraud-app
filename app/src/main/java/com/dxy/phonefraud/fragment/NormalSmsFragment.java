@@ -183,14 +183,27 @@ public class NormalSmsFragment extends Fragment implements AdapterView.OnItemCli
                                         for (int i = len - 1; i >= 0; i--) {
                                             Boolean value = smsAdapter.getIsSelectedMap().get(i);
                                             if (value) {
-                                        //       SmsReadDao.deleteOneSendSms(getActivity(), list.get(i).getId());
+
+                                                SmsReadDao.deleteOneReceivedSms(getActivity(), list.get(i).getSmsid());
+                                            //    BaseApplication.deleteNormalSms(i,list.get(i),getActivity());
                                                 list.remove(i);
+
                                                 smsAdapter.getIsSelectedMap().put(i,
                                                         false);
                                             }
                                         }
                                         smsAdapter.notifyDataSetChanged();
                                         alertDialog.cancel();
+                                        islong = false;
+                                        longlayout.setVisibility(View.GONE);
+                                        for (int i = 0; i < list.size(); i++) {
+                                            smsAdapter.getIsSelectedMap().put(i,
+                                                    false);
+                                            smsAdapter.getIsvisibleMap().put(i,
+                                                    CheckBox.GONE);
+                                        }
+
+                                        smsAdapter.notifyDataSetChanged();
                                     }
                                 })
                         .setNegativeButton("取消",
@@ -203,6 +216,7 @@ public class NormalSmsFragment extends Fragment implements AdapterView.OnItemCli
                                     }
                                 }).create();
                 alertDialog.show();
+
                 break;
 
             default:

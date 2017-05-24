@@ -85,8 +85,6 @@ public class NormalPhoneDetialActivity extends Activity implements View.OnClickL
 
         switch (v.getId()) {
             case R.id.sign_fraud:
-            //    DaoSession daoSession = BaseApplication.getInstances().getDaoSession();
-            //    FraudPhoneDao phoneDao = daoSession.getFraudPhoneDao();
                 alertDialog = new AlertDialog.Builder(this)
                         .setTitle("确定标记？")
                         .setMessage("您确定要把此电话标记为诈骗电话？")
@@ -95,15 +93,9 @@ public class NormalPhoneDetialActivity extends Activity implements View.OnClickL
                                 new DialogInterface.OnClickListener() {
 
                                     @Override
-                                    public void onClick(DialogInterface arg0,
-                                                        int arg1) {
-                                   /*     FraudPhone fphone = new FraudPhone();
-                                        fphone.setPhonenumber(phone.getPhonenumber());
-                                        fphone.setCalltime(phone.getCalltime());
-                                        fphone.setPhonename(phone.getPhonename());
-                                        fphone.setType(0);*/
-                                        BaseApplication.addFraudPhone(phone);
-                                        BaseApplication.deleteNormalphone(position, phone.getPhonenumber(), NormalPhoneDetialActivity.this);
+                                    public void onClick(DialogInterface arg0, int arg1) {
+                                        BaseApplication.addFraudPhone(position,phone,NormalPhoneDetialActivity.this);
+                                        BaseApplication.deleteNormalphone(position, phone, NormalPhoneDetialActivity.this);
                                         NormalPhoneDetialActivity.this.finish();
                                     }
                                 })
@@ -130,7 +122,7 @@ public class NormalPhoneDetialActivity extends Activity implements View.OnClickL
                                     @Override
                                     public void onClick(DialogInterface arg0,
                                                         int arg1) {
-                                        BaseApplication.deleteNormalphone(position,phone.getPhonenumber(),NormalPhoneDetialActivity.this);
+                                        BaseApplication.deleteNormalphone(position,phone,NormalPhoneDetialActivity.this);
                                         NormalPhoneDetialActivity.this.finish();
                                     }
                                 })

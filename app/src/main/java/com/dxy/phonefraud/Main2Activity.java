@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.dxy.phonefraud.DataSource.CallLogObserver;
+import com.dxy.phonefraud.DataSource.GetCall;
 import com.dxy.phonefraud.DataSource.SmsObserver;
 import com.dxy.phonefraud.callrecord.CallRecord;
 import com.dxy.phonefraud.callrecord.MyCallRecordReceiver;
@@ -49,6 +50,7 @@ import com.iflytek.cloud.SpeechRecognizer;
 import com.tuenti.smsradar.Sms;
 import com.tuenti.smsradar.SmsListener;
 import com.tuenti.smsradar.SmsRadar;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -155,8 +157,9 @@ public class Main2Activity extends Activity implements View.OnClickListener {
                 if(isRecordStarted && b && number != null && path != null)
                 {
                     path = "/storage/emulated/0/CallRecorder/CallRecorder.pcm";
-                    Log.i("ListenSmsPhone", "开始识别录音 " );
+                    Log.i("ListenSmsPhone", "开始识别录音 ");
                     RecordToText.getRecognizeResult(context, path, number, mRecognizerListener);
+
                 }
             }
 
@@ -177,19 +180,18 @@ public class Main2Activity extends Activity implements View.OnClickListener {
 
             @Override
             public void onSmsReceived(Sms sms) {
-                Log.i("ListenSmsPhone", sms.getMsg() + "  " + sms.getDate() + "  " + sms.getAddress() + "  " + sms.getType());
-                smsbody =  sms.getMsg();
-                try{
-                    Thread t = new Thread(new Runnable(){
+                Log.i("ListenSmsPhone", " " + sms.getMsg() + "  " + sms.getDate() + "  " + sms.getAddress() + "  " + sms.getType());
+                smsbody = sms.getMsg();
+                try {
+                    Thread t = new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            result = getHttp(smsbody,"0");
+                            result = smspostHttp(smsbody);
                         }
                     });
                     t.start();
                     t.join();
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
@@ -198,26 +200,33 @@ public class Main2Activity extends Activity implements View.OnClickListener {
                 SmsData sdata = new SmsData();
                 sdata.setSmstime(date);
                 sdata.setSmscontent(sms.getMsg());
-                sdata.setSmsnumber(sms.getAddress());
-                if(result.equals("ok"))
+                String number = sms.getAddress();
+                if(number.startsWith("+86"))
                 {
-                    Log.i("ListenSmsPhone", "addNormalSms ");
-                    BaseApplication.addNormalSms(sdata);
-                    //Toast.makeText(Main2Activity.this, "观察者 接收到正常短信", Toast.LENGTH_LONG).show();
+                    number = number.substring(3);
                 }
-                else
-                {
+
+                sdata.setSmsnumber(number);
+                if (result.equals("normal")) {
+                    Log.i("ListenSmsPhone", "addNormalSms ");
+                    String name = GetCall.queryNameFromContactsByNumber(getApplicationContext(), number);
+                    if(name != null)
+                    {
+                        sdata.setSmsname(name);
+                    }
+                    BaseApplication.addNormalSms(-1,sdata, getApplicationContext());
+                    //Toast.makeText(Main2Activity.this, "观察者 接收到正常短信", Toast.LENGTH_LONG).show();
+                } else {
                     Toast.makeText(Main2Activity.this, "您接收到诈骗短信，请注意防范短信诈骗", Toast.LENGTH_LONG).show();
                     Log.i("ListenSmsPhone", "addFraudSms ");
-                    BaseApplication.addFraudSms(sdata);
+                    BaseApplication.addFraudSms(-1, sdata, getApplicationContext());
                     String Ticker = "接收到诈骗短信";
                     String title = "短信诈骗";
                     String contentTitle = "您接收到诈骗短信，请注意防范短信诈骗";
                     int id = 0;
-                    setNotification(Ticker,title,contentTitle,smsResultIntent,id);
-
+                    setNotification(Ticker, title, contentTitle, smsResultIntent, id);
                 }
-       //         showSmsToast(sms);
+                //         showSmsToast(sms);
             }
         });
 
@@ -225,8 +234,8 @@ public class Main2Activity extends Activity implements View.OnClickListener {
    //     registerReceiver(receiver, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
     //    mHandler = new Handler();
 
-     //   smsContentObserver = new SmsObserver(mHandler, this);
-    //    getContentResolver().registerContentObserver(Uri.parse("content://sms"), true, smsContentObserver);
+     //   SmsObserver smsContentObserver = new SmsObserver(mHandler, this);
+     //   getContentResolver().registerContentObserver(Uri.parse("content://sms"), true, smsContentObserver);
  /*        callLogObserver = new CallLogObserver(mHandler, this);
         getContentResolver().registerContentObserver(CallLog.Calls.CONTENT_URI, true, callLogObserver);//等价于【Uri.parse("content://call_log/calls")】
 */
@@ -267,12 +276,12 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         }
         Log.i("用Activity实现", "点击事件");
     }
-    public String getHttp(String msgBody,String type){
+    public String smspostHttp(String msgBody){
         OkHttpClient okHttpClient = new OkHttpClient();
         FormBody.Builder fromBodyBuilder = new FormBody.Builder();
-        RequestBody requestBody = fromBodyBuilder.add("sms", msgBody).add("type", type).build();
+        RequestBody requestBody = fromBodyBuilder.add("sms", msgBody).build();
         Request.Builder requestBuilder = new Request.Builder();
-        Request request = requestBuilder.url("http://dxysun.com:8001/spark/testsms/").post(requestBody).build();
+        Request request = requestBuilder.url("http://dxysun.com:8001/spark/sms/").post(requestBody).build();
 
         Call call = okHttpClient.newCall(request);
 
@@ -341,7 +350,13 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         @Override
         public void onResult(RecognizerResult results, boolean isLast) {
             //         Log.d(TAG, results.getResultString());
+
             record_result = printResult(results);
+            PhoneData pdata = new PhoneData();
+            pdata.setRecordpath(record_path);
+            pdata.setIsrecord(1);
+            pdata.setPhonenumber(record_number);
+            pdata.setCalltime(call_time);
 
             if (isLast) {
                 // TODO 最后的结果
@@ -350,7 +365,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
                     Thread t = new Thread(new Runnable(){
                         @Override
                         public void run() {
-                            phone_result = postHttp(record_result, "0");
+                            phone_result = phonepostHttp(record_result, "0");
                         }
                     });
                     t.start();
@@ -364,12 +379,8 @@ public class Main2Activity extends Activity implements View.OnClickListener {
                     //   BaseApplication.addNormalSms(sdata);
                     Log.i("ListenSmsPhone", "识别结束 结果为正常 ");
 //                    Toast.makeText(Main2Activity.this, "观察者 接收到正常短信", Toast.LENGTH_LONG).show();
-                    PhoneData pdata1 = new PhoneData();
-                    pdata1.setRecordpath(record_path);
-                    pdata1.setIsrecord(1);
-                    pdata1.setPhonenumber(record_number);
-                    pdata1.setCalltime(call_time);
-                    BaseApplication.addNormalPhone(pdata1);
+                    pdata.setType(1);
+                    BaseApplication.addNormalPhone(-1,pdata,getApplicationContext());
                 }
                 else
                 {
@@ -381,14 +392,12 @@ public class Main2Activity extends Activity implements View.OnClickListener {
                     String title = "电话诈骗";
                     String contentTitle = "您刚刚接听的电话含有诈骗内容，请注意防范电话诈骗";
                     int id = 1;
-                    PhoneData pdata = new PhoneData();
-                    pdata.setRecordpath(record_path);
-                    pdata.setIsrecord(1);
-                    pdata.setPhonenumber(record_number);
-                    pdata.setCalltime(call_time);
-                    BaseApplication.addFraudPhone(pdata);
+                    pdata.setType(0);
+                    BaseApplication.addFraudPhone(-1,pdata,getApplicationContext());
                     setNotification(Ticker, title, contentTitle, phoneResultIntent, id);
                 }
+                Log.i("ListenSmsPhone", "添加录音列表 ");
+                BaseApplication.addRecordPhone(-1,pdata,getApplicationContext());
             }
         }
 
@@ -431,7 +440,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         //      record_text.setText(resultBuffer.toString());
         //    mResultText.setSelection(mResultText.length());
     }
-    public String postHttp(String msgBody,String type){
+    public String phonepostHttp(String msgBody,String type){
         OkHttpClient okHttpClient = new OkHttpClient();
         FormBody.Builder fromBodyBuilder = new FormBody.Builder();
         RequestBody requestBody = fromBodyBuilder.add("sms", msgBody).add("type", type).build();

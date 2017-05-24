@@ -79,9 +79,8 @@ public class FraudPhoneDetialActivity extends AppCompatActivity implements View.
                                     @Override
                                     public void onClick(DialogInterface arg0,
                                                         int arg1) {
-
-                                        BaseApplication.addNormalPhone(phone);
-                                        BaseApplication.deleteFraudlphone(position,phone.getPhonenumber(),FraudPhoneDetialActivity.this);
+                                        BaseApplication.addNormalPhone(position,phone,FraudPhoneDetialActivity.this);
+                                        BaseApplication.deleteFraudlphone(position,phone,FraudPhoneDetialActivity.this);
                                         FraudPhoneDetialActivity.this.finish();
                                     }
                                 })
@@ -108,7 +107,7 @@ public class FraudPhoneDetialActivity extends AppCompatActivity implements View.
                                     @Override
                                     public void onClick(DialogInterface arg0,
                                                         int arg1) {
-                                        BaseApplication.deleteFraudlphone(position, phone.getPhonenumber(), FraudPhoneDetialActivity.this);
+                                        BaseApplication.deleteFraudlphone(position, phone, FraudPhoneDetialActivity.this);
                                         FraudPhoneDetialActivity.this.finish();
                                     }
                                 })

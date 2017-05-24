@@ -112,8 +112,9 @@ public class CallRecordReceiver extends PhoneCallReceiver {
      //   appState.setPhonenumber(number);
         phonenumber = number;
         String name = GetCall.queryNameFromContactsByNumber(context, number);
-
-        if(name == null)
+        SharedPreferences pref = context.getSharedPreferences("set", context.MODE_PRIVATE);
+        Boolean b = pref.getBoolean("is_record", true);
+        if(name == null )
         {
             if(NetworkTest.getNetWorkStatus(context) == Constants.NETWORK_CLASS_2_G || NetworkTest.getNetWorkStatus(context) == Constants.NETWORK_CLASS_UNKNOWN)
             {
@@ -137,14 +138,14 @@ public class CallRecordReceiver extends PhoneCallReceiver {
                 catch (Exception e){
                     e.printStackTrace();
                 }
-                if(result.equals("ok"))
+                if(result.equals("ok") && b)
                 {
                     Log.i(TAG, "RINGING  :" + "result ok");
                     isRecordStarted = true;
                     CustomTimeToast(context.getApplicationContext(), "未知状态的陌生电话，已开启通话录音", 5 * 1000);
                 //    Toast.makeText(context.getApplicationContext(), "未知状态的陌生电话，已开启通话录音", Toast.LENGTH_LONG).show();
                 }
-                else
+                if(result.equals("notok"))
                 {
                     Log.i(TAG, "RINGING :" + "result get not ok");
                     //  Toast.makeText(context.getApplicationContext(), "诈骗电话，请及时挂断", Toast.LENGTH_LONG).show();

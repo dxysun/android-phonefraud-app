@@ -4,10 +4,15 @@ package com.dxy.phonefraud.DataSource;
  * Created by dongx on 2017/4/8.
  */
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,6 +22,7 @@ import android.os.SystemClock;
 import android.provider.Telephony.Sms;
 import android.util.Log;
 
+import com.dxy.phonefraud.entity.SmsData;
 
 
 public class SmsReadDao {
@@ -87,6 +93,25 @@ public class SmsReadDao {
 
         cursor.close();
         return false;
+    }
+
+     public static void insertSms(Context context,SmsData sdata)
+    {
+        ContentResolver cr = context.getContentResolver();
+        ContentValues cv = new ContentValues();
+        cv.put("body", sdata.getSmscontent());
+        cv.put("address", sdata.getSmsnumber());
+        cv.put("type", 1);
+        String d = sdata.getSmstime();
+        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        long time = System.currentTimeMillis();
+        try {
+            time = dateformat.parse(d).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        cv.put("date", time);
+        cr.insert(Uri.parse("content://sms"), cv);
     }
 
     /**
@@ -459,7 +484,7 @@ public class SmsReadDao {
         // FirstName='William') AND LastName='Carter'
 
      //   int delete = context.getContentResolver().delete(contentUri,"(type=2 or type=5) and _id=?", new String[] { id });
-        int delete = context.getContentResolver().delete(contentUri,"type=1 and _id=?", new String[] { id });
+        int delete = context.getContentResolver().delete(contentUri,"type=2 and _id=?", new String[] { id });
         return delete;
     }
 

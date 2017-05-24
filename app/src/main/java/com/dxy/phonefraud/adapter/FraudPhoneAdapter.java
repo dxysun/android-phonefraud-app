@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.dxy.phonefraud.R;
 import com.dxy.phonefraud.entity.PhoneData;
+import com.dxy.phonefraud.entity.SmsData;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,6 +38,14 @@ public class FraudPhoneAdapter extends BaseAdapter {
 
     public FraudPhoneAdapter(FragmentActivity fragmentActivity, List<PhoneData> list) {
         // TODO Auto-generated constructor stub
+        if (list != null)
+        {
+            Collections.sort(list, new Comparator<PhoneData>() {
+                public int compare(PhoneData arg0, PhoneData arg1) {
+                    return arg1.getCalltime().compareTo(arg0.getCalltime());
+                }
+            });
+        }
         this.list = list;
         this.activity = fragmentActivity;
         inflater = (LayoutInflater) fragmentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -46,7 +55,7 @@ public class FraudPhoneAdapter extends BaseAdapter {
 
     }
     // 初始化isSelectedMap的数据
-    private void initDate() {
+    public void initDate() {
         for (int i = 0; i < list.size(); i++) {
             getIsSelectedMap().put(i, false);
             getIsvisibleMap().put(i, CheckBox.GONE);

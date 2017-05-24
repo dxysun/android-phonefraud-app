@@ -182,13 +182,26 @@ public class NormalPhoneFragment extends Fragment implements AdapterView.OnItemC
                                             if (value) {
                                             //    GetCall.DeleteCallById(getActivity(),list.get(i).getId());
                                            //     GetCall.DeleteCallByNumber(getActivity(), list.get(i).getPhonenumber());
+                                                GetCall.DeleteCallByNumber(getActivity(), list.get(i).getPhonenumber());
+                                           //     BaseApplication.deleteNormalphone(i,list.get(i),getActivity());
                                                 list.remove(i);
+
                                                 phoneAdapter.getIsSelectedMap().put(i,
                                                         false);
                                             }
                                         }
-                                        phoneAdapter.notifyDataSetChanged();
+
                                         alertDialog.cancel();
+                                        islong = false;
+                                        longlayout.setVisibility(View.GONE);
+                                        for (int i = 0; i < list.size(); i++) {
+                                            phoneAdapter.getIsSelectedMap().put(i,
+                                                    false);
+                                            phoneAdapter.getIsvisibleMap().put(i,
+                                                    CheckBox.GONE);
+                                        }
+                                        phoneAdapter.initDate();
+                                        phoneAdapter.notifyDataSetChanged();
                                     }
                                 })
                         .setNegativeButton("取消",
@@ -201,6 +214,7 @@ public class NormalPhoneFragment extends Fragment implements AdapterView.OnItemC
                                     }
                                 }).create();
                 alertDialog.show();
+
                 break;
 
             default:

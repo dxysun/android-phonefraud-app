@@ -1,6 +1,8 @@
 package com.dxy.phonefraud.DataSource;
 
 import android.Manifest;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -12,6 +14,7 @@ import android.util.Log;
 
 import com.dxy.phonefraud.entity.PhoneData;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -216,8 +219,47 @@ public class GetCall {
             //    context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, CallLog.Calls.NUMBER+"=?" , new String[]{id});
         }
         catch (SecurityException ex){
-
+            ex.printStackTrace();
         }
+    }
+    static public void insertCallLog(Context context,PhoneData pdata)
+    {
+   /*     ContentResolver cr = context.getContentResolver();
+        ContentValues cv = new ContentValues();
+        cv.put("body", sdata.getSmscontent());
+        cv.put("address", sdata.getSmsnumber());
+        cv.put("type", 1);
+        String d = sdata.getSmstime();
+        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        long time = System.currentTimeMillis();
+        try {
+            time = dateformat.parse(d).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        cv.put("date", time);
+        cr.insert(Uri.parse("content://sms"), cv);*/
+        ContentValues values = new ContentValues();
+        values.put(CallLog.Calls.NUMBER, pdata.getPhonenumber());
+        SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        long time = System.currentTimeMillis();
+        try {
+            time = dateformat.parse(pdata.getCalltime()).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        values.put(CallLog.Calls.DATE,time);
+        values.put(CallLog.Calls.TYPE,CallLog.Calls.INCOMING_TYPE);
+        values.put(CallLog.Calls.NEW, 1);//0已看1未看
+
+        try{
+            context.getContentResolver().insert(CallLog.Calls.CONTENT_URI, values);
+            //    context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, CallLog.Calls.NUMBER+"=?" , new String[]{id});
+        }
+        catch (SecurityException ex){
+            ex.printStackTrace();
+        }
+
     }
     static public void DeleteCallByNumber(Context context,String number)
     {
@@ -225,7 +267,7 @@ public class GetCall {
               context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, CallLog.Calls.NUMBER+"=?" , new String[]{number});
         }
         catch (SecurityException ex){
-
+            ex.printStackTrace();
         }
     }
 }

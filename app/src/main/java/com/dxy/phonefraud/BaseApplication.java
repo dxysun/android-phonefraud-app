@@ -1,12 +1,15 @@
 package com.dxy.phonefraud;
 
 import android.app.Application;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.dxy.phonefraud.DataSource.GetCall;
 import com.dxy.phonefraud.DataSource.GetSms;
+import com.dxy.phonefraud.DataSource.SmsInfo;
+import com.dxy.phonefraud.DataSource.SmsReadDao;
 import com.dxy.phonefraud.adapter.FraudPhoneAdapter;
 import com.dxy.phonefraud.adapter.FraudSmsAdapter;
 import com.dxy.phonefraud.adapter.NormalPhoneAdapter;
@@ -87,7 +90,8 @@ public class BaseApplication extends Application {
     }
 
     public static void setFraudsmslist() {
-        String content = "恭喜您！浙江卫视《中国好声音》第三季栏目开播以来受到全国观众的观看和热爱，" +
+        fraudsmslist = new ArrayList<>();
+  /*      String content = "恭喜您！浙江卫视《中国好声音》第三季栏目开播以来受到全国观众的观看和热爱，" +
                 "为了答谢全国观众的大力支持特举办全国手机用户抽奖活动。您的手机号码很幸运被场外抽奖抽中，" +
                 "将获得赞助商苹果笔记本电脑一台及奖金11800元人民币！请您登陆http://hsxzuk.com确认领奖，" +
                 "领奖码2384.工作人员将在确认领奖起24小时内联系您并将奖品邮寄给您。请您尽快确认领奖 谢谢！";
@@ -96,9 +100,19 @@ public class BaseApplication extends Application {
                 "与苹果MacBook Pro笔记本电脑一台，您的验证码为【5898】，详情请登陆官方活动" +
                 "网站:www.babaac.com填写邮寄地址及时领取。注：如将个人领奖信息泄露给他人" +
                 "造成冒名领取本台概不负责。【湖南卫视】";
-        fraudsmslist = new ArrayList<>();
+
         fraudsmslist.add(new SmsData("111", "18205147449", "2017-05-08 20:58:31", content1, 0));
-        fraudsmslist.add(new SmsData("110", "1069674936730", "2017-04-14 13:34:45", content, 0));
+        fraudsmslist.add(new SmsData("110", "1069674936730", "2017-04-14 13:34:45", content, 0));*/
+        List<SmsData> pl1 = DataSupport.findAll(SmsData.class);
+        for(int i = 0;i < pl1.size();i ++)
+        {
+            SmsData s1 = pl1.get(i);
+            if(s1.getType() == 0)
+            {
+                fraudsmslist.add(s1);
+            }
+        }
+
 
     }
 
@@ -109,8 +123,6 @@ public class BaseApplication extends Application {
     public static void setFraudsmsAdapter(FraudSmsAdapter fraudsmsAdapter) {
         BaseApplication.fraudsmsAdapter = fraudsmsAdapter;
     }
-
-
 
     public SQLiteDatabase getDb() {
         return db;
@@ -130,18 +142,26 @@ public class BaseApplication extends Application {
 
     public static void setRecoredphonelist() {
         recoredphonelist = new ArrayList<>();
-        PhoneData  p =   new PhoneData("110","67443", "2017-05-08 22:32:34",0);
-        p.setIsrecord(1);
-        p.setListtype(3);
-        p.setRecordpath("/storage/emulated/0/CallRecorder/CallRecorder.pcm");
-        recoredphonelist.add(p);
-     /*   for (int i = 0; i < 5; i++) {
-            PhoneData  p =   new PhoneData("110","1346775885" + i, "张三", "2017-04-"+ i,0);
+        List<PhoneData> plist = DataSupport.where("phonenumber = ?","67443").find(PhoneData.class);
+        if(plist.size() == 0)
+        {
+            PhoneData  p =   new PhoneData("110","67443", "2017-05-08 22:32:34",0);
             p.setIsrecord(1);
+            p.setType(2);
             p.setListtype(3);
             p.setRecordpath("/storage/emulated/0/CallRecorder/CallRecorder.pcm");
-            recoredphonelist.add(p);
-        }*/
+            p.save();
+        }
+
+        List<PhoneData> pl1 = DataSupport.findAll(PhoneData.class);
+        for(int i = 0;i < pl1.size();i ++)
+        {
+            PhoneData p1 = pl1.get(i);
+            if(p1.getIsrecord() == 1)
+            {
+                recoredphonelist.add(p1);
+            }
+        }
     }
 
     public static FraudPhoneAdapter getFraudphoneAdapter() {
@@ -167,44 +187,23 @@ public class BaseApplication extends Application {
 
     public static void  setFraudphonelist() {
 
-  /*      DaoSession ds = instances.getDaoSession();
-        FraudPhoneDao fphonedao = ds.getFraudPhoneDao();
-        List<FraudPhone> fphonelist =  fphonedao.loadAll();
-        Log.i("NormalPhoneFragment", "setFraudphonelist  " + fphonelist.size());
         fraudphonelist = new ArrayList<>();
-        for(FraudPhone phone : fphonelist) {
-            PhoneData p = new PhoneData();
-            p.setListtype(0);
-            p.setPhonename(phone.getPhonename());
-            p.setType(0);
-            p.setCalltime(phone.getCalltime());
-            p.setPhonenumber(phone.getPhonenumber());
-            fraudphonelist.add(p);
-        }*/
-   /*     PhoneData phone1 = new PhoneData();
-        phone1.setPhonenumber("1234567890145");
-        phone1.setPhonename("王五");
-        phone1.setCalltime("2017-04-15 15:22:45");
-        phone1.setType(0);
-        phone1.setIsrecord(0);
-        phone1.save();*/
-
-        fraudphonelist = new ArrayList<>();
-        PhoneData phone = new PhoneData();
+    /*    PhoneData phone = new PhoneData();
         phone.setPhonenumber("18631266315");
-    //    phone.setPhonename("李四");
         phone.setCalltime("2017-04-09 15:22:45");
         phone.setType(0);
         phone.setIsrecord(0);
-        fraudphonelist.add(phone);
+        fraudphonelist.add(phone);*/
         List<PhoneData> pl1 = DataSupport.findAll(PhoneData.class);
-        if(pl1.size() > 0)
+        for(int i = 0;i < pl1.size();i ++)
         {
-            PhoneData pl = DataSupport.find(PhoneData.class,pl1.get(0).getId());
-            fraudphonelist.add(pl);
+            PhoneData p = pl1.get(i);
+            if(p.getType() == 0)
+            {
+                fraudphonelist.add(p);
+            }
         }
 
-     //   fraudphonelist =
     }
 
     public static ArrayList<PhoneData> getNormalphonelist() {
@@ -218,52 +217,86 @@ public class BaseApplication extends Application {
     public static void setNormalphonemap(HashMap<String, ArrayList<PhoneData>> phonemap) {
         normalphonemap = phonemap;
     }
-    public static void deleteNormalphone(int position,String phonenumber,Context context){
-        if(normalphoneAdapter != null)
-        normalphoneAdapter.remove(position);
-/*        normalphonelist.remove(position);
-    //    GetCall.DeleteCallByNumber(context, phonenumber);
+    public static void deleteNormalphone(int position,PhoneData phone,Context context){
         if(normalphoneAdapter != null)
         {
-            normalphoneAdapter.notifyDataSetChanged();
-        }*/
+        //    DataSupport.delete(PhoneData.class, phone.getId());
+            GetCall.DeleteCallByNumber(context,phone.getPhonenumber());
+            normalphoneAdapter.remove(position);
+        }
+
     }
 
-    public static void deleteFraudlphone(int position,String phonenumber,Context context){
+    public static void deleteFraudlphone(int position,PhoneData phone,Context context){
    //     PhoneData p = fraudphonelist.get(position);
-        if(fraudphoneAdapter != null)
-        fraudphoneAdapter.remove(position);
-   //     GetCall.DeleteCallByNumber(context, phonenumber);
-    //    DaoSession ds = instances.getDaoSession();
-     //   FraudPhoneDao fphonedao = ds.getFraudPhoneDao();
-  /*      fraudphonelist.remove(position);
-        if(fraudphoneAdapter != null)
+
+        if(fraudphoneAdapter != null && position != -1)
         {
-            fraudphoneAdapter.notifyDataSetChanged();
-        }*/
+            if(phone.getIsrecord() == 1)
+            {
+                for(int i = 0;i < recoredphonelist.size();i ++)
+                {
+                    if(recoredphonelist.get(i).getPhonenumber().equals(phone.getPhonenumber()))
+                    {
+                        recordhoneAdapter.remove(i);
+                        break;
+                        //    recoredphonelist.remove(i);
+                    }
+                }
+            }
+
+            DataSupport.delete(PhoneData.class, phone.getId());
+            fraudphoneAdapter.remove(position);
+
+        }
+        else
+        {
+            int pos = 0;
+            for(int i = 0;i < fraudphonelist.size();i ++)
+            {
+                if(fraudphonelist.get(i).getPhonenumber().equals(phone.getPhonenumber()))
+                {
+                    pos = i;
+                    break;
+                }
+            }
+            fraudphonelist.remove(pos);
+        }
+
     }
 
-    public static void deleteRecordphone(int position,String phonenumber,Context context){
-        //     PhoneData p = fraudphonelist.get(position);
+    public static void deleteRecordphone(int position,PhoneData phone,Context context){
+    //    PhoneData p = DataSupport.find(PhoneData.class,phone.getId());
+     //   phone.setIsrecord(0);
+        if(phone.getType() != 0)
+        {
+            DataSupport.delete(PhoneData.class, phone.getId());
+        }
+        else
+        {
+            ContentValues values = new ContentValues();
+            values.put("isrecord", "0");
+            DataSupport.update(PhoneData.class, values, phone.getId());
+        }
         if(recordhoneAdapter != null)
         recordhoneAdapter.remove(position);
-        //     GetCall.DeleteCallByNumber(context, phonenumber);
-        //    DaoSession ds = instances.getDaoSession();
-        //   FraudPhoneDao fphonedao = ds.getFraudPhoneDao();
-  /*      fraudphonelist.remove(position);
-        if(fraudphoneAdapter != null)
-        {
-            fraudphoneAdapter.notifyDataSetChanged();
-        }*/
-    }
-    public static void deleteNormalSms(int position,String id,Context context){
-        if(normalsmsAdapter != null)
-            normalsmsAdapter.remove(position);
-    }
-    public static void deleteFraudSms(int position,String id,Context context){
-        if(fraudsmsAdapter != null)
-            fraudsmsAdapter.remove(position);
 
+    }
+    public static void deleteNormalSms(int position,SmsData sms,Context context){
+        if(normalsmsAdapter != null)
+        {
+        //    DataSupport.delete(SmsData.class, sms.getId());
+            SmsReadDao.deleteOneReceivedSms(context, sms.getSmsid());
+            normalsmsAdapter.remove(position);
+        }
+
+    }
+    public static void deleteFraudSms(int position,SmsData sms,Context context){
+        if(fraudsmsAdapter != null)
+        {
+            DataSupport.delete(SmsData.class, sms.getId());
+            fraudsmsAdapter.remove(position);
+        }
     }
 
     public static void setNormalphonelist(Context context) {
@@ -290,11 +323,62 @@ public class BaseApplication extends Application {
 
     }
 
+   public static void addRecordPhone(int position,PhoneData fphone,Context context)
+   {
+       Log.i("ListenSmsPhone", "addRecordPhone ");
+         if(recordhoneAdapter != null)
+         {
+             Log.i("ListenSmsPhone", "addRecordPhone not null");
+             fphone.save();
+             recordhoneAdapter.add(fphone);
+         }
+   }
 
-
-    public static void addFraudPhone(PhoneData fphone){
+    public static void addFraudPhone(int position,PhoneData fphone,Context context){
     //    fraudphonelist.add(p);
+        fphone.setListtype(0);
         fphone.setType(0);
+        Log.i("BaseApplication", "getIsrecord " + fphone.getIsrecord());
+        if(position != -1)
+        {
+            if (fphone.getIsrecord() == 1 )
+            {
+                Log.i("BaseApplication", "id " + fphone.getId());
+                recoredphonelist.get(position).setType(0);
+                recordhoneAdapter.notifyDataSetChanged();
+                Log.i("BaseApplication", "getType " + fphone.getType());
+                ContentValues values = new ContentValues();
+                values.put("type", "0");
+                DataSupport.update(PhoneData.class, values, fphone.getId());
+                //  normalphoneAdapter
+
+                int pos = -1;
+                for(int i = 0;i < normalphonelist.size();i ++)
+                {
+                    if(fphone.getPhonenumber() != null && normalphonelist.get(i).getPhonenumber().equals(fphone.getPhonenumber()))
+                    {
+                        pos = i;
+                        break;
+                    }
+                }
+                if(pos != -1)
+                {
+                    normalphonelist.remove(pos);
+                    normalphoneAdapter.notifyDataSetChanged();
+                }
+                GetCall.DeleteCallByNumber(context, fphone.getPhonenumber());
+                //    PhoneData p1 = DataSupport.find(PhoneData.class, fphone.getId());
+                //    Log.i("BaseApplication", "after getType " + p1.getType());
+            }
+            else
+            {
+                fphone.save();
+            }
+        }
+        else
+        {
+            fphone.save();
+        }
         if(fraudphoneAdapter != null)
         {
           //  fraudphoneAdapter.notifyDataSetChanged();
@@ -302,9 +386,27 @@ public class BaseApplication extends Application {
         }
 
     }
-    public static void addNormalPhone(PhoneData phone){
+    public static void addNormalPhone(int position,PhoneData phone,Context context){
         //    fraudphonelist.add(p);
-        phone.setType(1);
+      //  phone.setType(1);
+        if(position != -1)
+        {
+            GetCall.insertCallLog(context, phone);
+            if(phone.getIsrecord() == 0)
+            {
+                DataSupport.delete(PhoneData.class, phone.getId());
+            }
+            else
+            {
+                recoredphonelist.get(position).setType(1);
+                recordhoneAdapter.notifyDataSetChanged();
+                ContentValues values = new ContentValues();
+                values.put("type", "1");
+                DataSupport.update(PhoneData.class, values, phone.getId());
+            }
+
+        }
+
         if(normalphoneAdapter != null)
         {
             //  fraudphoneAdapter.notifyDataSetChanged();
@@ -313,8 +415,20 @@ public class BaseApplication extends Application {
     }
 
 
-    public static void addFraudSms(SmsData sms){
+    public static void addFraudSms(int position,SmsData sms,Context context){
         sms.setType(0);
+        sms.save();
+        if(position != -1)
+        {
+            SmsReadDao.deleteOneReceivedSms(context,sms.getSmsid());
+        }
+        else
+        {
+            SmsInfo smsinfo = SmsReadDao.getLastReceivedSmsInfo(context);
+            Log.i("ListenSmsPhone", "body  "+smsinfo.getBody());
+            SmsReadDao.deleteOneReceivedSms(context, smsinfo.getId());
+        }
+
         Log.i("ListenSmsPhone", "addFraudSms fraudsmsAdapter");
         if(fraudsmsAdapter != null)
         {
@@ -323,8 +437,13 @@ public class BaseApplication extends Application {
             fraudsmsAdapter.add(sms);
         }
     }
-    public static void addNormalSms(SmsData sms){
-        sms.setType(1);
+    public static void addNormalSms(int position,SmsData sms,Context context){
+        if(position != -1)
+        {
+            SmsReadDao.insertSms(context, sms);
+        }
+       // sms.setType(1);
+    //    SmsReadDao.deleteLastSms(context, sms.getSmsid());
         if(normalsmsAdapter != null)
         {
             //  fraudphoneAdapter.notifyDataSetChanged();

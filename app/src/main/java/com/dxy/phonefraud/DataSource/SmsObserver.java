@@ -100,11 +100,11 @@ public class SmsObserver extends ContentObserver {
                 if(result.equals("ok"))
                 {
                     Toast.makeText(context, "观察者 接收到正常短信", Toast.LENGTH_LONG).show();
-                    BaseApplication.addNormalSms(sms);
+                    BaseApplication.addNormalSms(-1,sms,context);
                 }
                 else
                 {
-                    BaseApplication.addFraudSms(sms);
+                    BaseApplication.addFraudSms(-1,sms,context);
                 //    Context con = AndroidAppHelper.currentApplication().getApplicationContext();
                     alertDialog = new AlertDialog.Builder(context)
                             .setTitle("接受到诈骗短信，是否删除？")

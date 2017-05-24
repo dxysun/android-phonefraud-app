@@ -70,12 +70,12 @@ public class SMSReceiver extends BroadcastReceiver {
                 if(result.equals("ok"))
                 {
                     Log.i(TAG, "接收者 收到 ok ");
-                    BaseApplication.addNormalSms(sms);
+                    BaseApplication.addNormalSms(-1,sms,context);
                 }
                 else
                 {
                     Toast.makeText(context, "接收者 接收到诈骗短信", Toast.LENGTH_LONG).show();
-                    BaseApplication.addFraudSms(sms);
+                    BaseApplication.addFraudSms(-1,sms,context);
                     Log.i(TAG, "接收者 收到 not ok ");
                     alertDialog = new AlertDialog.Builder(context)
                             .setTitle("接受到诈骗短信，是否删除？")
@@ -102,7 +102,6 @@ public class SMSReceiver extends BroadcastReceiver {
                                     }).create();
                     alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
                     alertDialog.show();
-
                 }
             }
         }

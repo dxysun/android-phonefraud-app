@@ -46,7 +46,7 @@ public class NormalSmsAdapter extends BaseAdapter {
         initDate();
     }
     // 初始化isSelectedMap的数据
-    private void initDate() {
+    public void initDate() {
         for (int i = 0; i < list.size(); i++) {
             getIsSelectedMap().put(i, false);
             getIsvisibleMap().put(i, CheckBox.GONE);

@@ -24,6 +24,9 @@ import com.dxy.phonefraud.FraudPhoneDetialActivity;
 import com.dxy.phonefraud.R;
 import com.dxy.phonefraud.adapter.FraudPhoneAdapter;
 import com.dxy.phonefraud.entity.PhoneData;
+
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -152,13 +155,26 @@ public class FraudPhoneFragment extends Fragment implements AdapterView.OnItemCl
                                         for (int i = len - 1; i >= 0; i--) {
                                             Boolean value = phoneAdapter.getIsSelectedMap().get(i);
                                             if (value) {
+                                            //    BaseApplication.deleteFraudlphone(i,list.get(i),getActivity());
+                                                DataSupport.delete(PhoneData.class, list.get(i).getId());
                                                 list.remove(i);
+
                                                 phoneAdapter.getIsSelectedMap().put(i,
                                                         false);
                                             }
                                         }
-                                        phoneAdapter.notifyDataSetChanged();
+
                                         alertDialog.cancel();
+                                        islong = false;
+                                        longlayout.setVisibility(View.GONE);
+                                        for (int i = 0; i < list.size(); i++) {
+                                            phoneAdapter.getIsSelectedMap().put(i,
+                                                    false);
+                                            phoneAdapter.getIsvisibleMap().put(i,
+                                                    CheckBox.INVISIBLE);
+                                        }
+                                        phoneAdapter.initDate();
+                                        phoneAdapter.notifyDataSetChanged();
                                     }
                                 })
                         .setNegativeButton("取消",
@@ -171,6 +187,7 @@ public class FraudPhoneFragment extends Fragment implements AdapterView.OnItemCl
                                     }
                                 }).create();
                 alertDialog.show();
+
                 break;
 
             default:

@@ -3,6 +3,7 @@ package com.dxy.phonefraud.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,9 @@ import android.widget.TextView;
 import com.dxy.phonefraud.R;
 import com.dxy.phonefraud.entity.PhoneData;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,7 +47,7 @@ public class RecordPhoneAdapter  extends BaseAdapter {
 
     }
     // 初始化isSelectedMap的数据
-    private void initDate() {
+    public void initDate() {
         for (int i = 0; i < list.size(); i++) {
             getIsSelectedMap().put(i, false);
             getIsvisibleMap().put(i, CheckBox.GONE);
@@ -94,12 +98,13 @@ public class RecordPhoneAdapter  extends BaseAdapter {
         }
         if(pdata.getPhonename() != null)
         {
-            vh.fraudphone.setText(pdata.getPhonename() +"  "+pdata.getPhonenumber());
+            vh.fraudphone.setText(pdata.getPhonename() + "  " + pdata.getPhonenumber());
         }
         else
         {
             vh.fraudphone.setText(pdata.getPhonenumber());
         }
+
         vh.phonetime.setText(pdata.getCalltime());
     }
     @Override
@@ -121,19 +126,41 @@ public class RecordPhoneAdapter  extends BaseAdapter {
                 vh.checkBox.setChecked(getIsSelectedMap().get(position));
                 vh.checkBox.setVisibility(getIsvisibleMap().get(position));
             }
+
             if(pdata.getPhonename() != null)
             {
-                vh.fraudphone.setText(pdata.getPhonename() +"  "+pdata.getPhonenumber());
+                vh.fraudphone.setText(pdata.getPhonename() + "  " + pdata.getPhonenumber());
             }
             else
             {
                 vh.fraudphone.setText(pdata.getPhonenumber());
             }
-
+            if(pdata.getType() == 0)
+           {
+              vh.fraudphone.setTextColor(Color.RED);
+           }
+           else
+            {
+                vh.fraudphone.setTextColor(Color.GRAY);
+            }
             vh.phonetime.setText(pdata.getCalltime());
 
 
         return view;
+    }
+    public void add(PhoneData data) {
+        Log.i("ListenSmsPhone", "PhoneData  add");
+        if (list == null) {
+            list = new ArrayList<>();
+        }
+        list.add(data);
+        Collections.sort(list, new Comparator<PhoneData>() {
+            public int compare(PhoneData arg0, PhoneData arg1) {
+                return arg1.getCalltime().compareTo(arg0.getCalltime());
+            }
+        });
+        initDate();
+        notifyDataSetChanged();
     }
     public void remove(int position) {
         if(list != null) {

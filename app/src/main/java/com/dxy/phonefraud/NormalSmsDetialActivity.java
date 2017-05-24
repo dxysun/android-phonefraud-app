@@ -83,13 +83,8 @@ public class NormalSmsDetialActivity extends Activity implements View.OnClickLis
                                     @Override
                                     public void onClick(DialogInterface arg0,
                                                         int arg1) {
-                                   /*     FraudPhone fphone = new FraudPhone();
-                                        fphone.setPhonenumber(phone.getPhonenumber());
-                                        fphone.setCalltime(phone.getCalltime());
-                                        fphone.setPhonename(phone.getPhonename());
-                                        fphone.setType(0);*/
-                                        BaseApplication.addFraudSms(sms);
-                                        BaseApplication.deleteNormalSms(position, sms.getSmsid(), NormalSmsDetialActivity.this);
+                                        BaseApplication.addFraudSms(position,sms, NormalSmsDetialActivity.this);
+                                        BaseApplication.deleteNormalSms(position, sms, NormalSmsDetialActivity.this);
                                         NormalSmsDetialActivity.this.finish();
                                     }
                                 })
@@ -116,7 +111,7 @@ public class NormalSmsDetialActivity extends Activity implements View.OnClickLis
                                     @Override
                                     public void onClick(DialogInterface arg0,
                                                         int arg1) {
-                                        BaseApplication.deleteNormalSms(position,sms.getSmsid(),NormalSmsDetialActivity.this);
+                                        BaseApplication.deleteNormalSms(position,sms,NormalSmsDetialActivity.this);
                                         NormalSmsDetialActivity.this.finish();
                                     }
                                 })

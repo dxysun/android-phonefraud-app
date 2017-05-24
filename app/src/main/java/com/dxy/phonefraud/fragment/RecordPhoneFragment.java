@@ -26,6 +26,8 @@ import com.dxy.phonefraud.adapter.PhoneAdapter;
 import com.dxy.phonefraud.adapter.RecordPhoneAdapter;
 import com.dxy.phonefraud.entity.PhoneData;
 
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -142,13 +144,34 @@ public class RecordPhoneFragment extends Fragment implements AdapterView.OnItemC
                                         for (int i = len - 1; i >= 0; i--) {
                                             Boolean value = phoneAdapter.getIsSelectedMap().get(i);
                                             if (value) {
+                                            //   BaseApplication.deleteRecordphone(i, list.get(i), getActivity());
+                                                list.get(i).setIsrecord(0);
+                                                if(list.get(i).getType() != 0)
+                                                {
+                                                    DataSupport.delete(PhoneData.class, list.get(i).getId());
+                                                }
+                                                else
+                                                {
+                                                    list.get(i).update(list.get(i).getId());
+                                                }
+
                                                 list.remove(i);
                                                 phoneAdapter.getIsSelectedMap().put(i,
                                                         false);
                                             }
                                         }
+
+                                        alertDialog.cancel();islong = false;
+                                        longlayout.setVisibility(View.GONE);
+                                        for (int i = 0; i < list.size(); i++) {
+                                            phoneAdapter.getIsSelectedMap().put(i,
+                                                    false);
+                                            phoneAdapter.getIsvisibleMap().put(i,
+                                                    CheckBox.INVISIBLE);
+                                        }
+                                        phoneAdapter.initDate();
                                         phoneAdapter.notifyDataSetChanged();
-                                        alertDialog.cancel();
+
                                     }
                                 })
                         .setNegativeButton("取消",
@@ -161,6 +184,7 @@ public class RecordPhoneFragment extends Fragment implements AdapterView.OnItemC
                                     }
                                 }).create();
                 alertDialog.show();
+
                 break;
 
             default:

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -36,6 +37,7 @@ import com.iflytek.cloud.ui.RecognizerDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.litepal.crud.DataSupport;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -98,9 +100,16 @@ public class RecordPhoneDetielActivity extends Activity implements View.OnClickL
         record_to_text = (Button)findViewById(R.id.record_to_text);
         playButton = (ImageButton)findViewById(R.id.playButton);
         record_file = (TextView)findViewById(R.id.record_file);
+
         isPlaying = false;
         isPlay = true;
         setdata();
+        if(phone.getType() == 0)
+        {
+            record_info.setTextColor(Color.RED);
+            sign_record_fraud.setText("标记为正常电话");
+        }
+
         if(mInitListener == null)
         {
             Log.i("MscSpeechLog","mInitListener null");
@@ -161,11 +170,14 @@ public class RecordPhoneDetielActivity extends Activity implements View.OnClickL
 
         switch (v.getId()) {
             case R.id.sign_record_fraud:
-                //    DaoSession daoSession = BaseApplication.getInstances().getDaoSession();
-                //    FraudPhoneDao phoneDao = daoSession.getFraudPhoneDao();
+                String str = "您确定要把此电话标记为诈骗电话？";
+                if(phone.getType() == 0)
+                {
+                    str = "您确定要把此电话标记为正常电话？";
+                }
                 alertDialog = new AlertDialog.Builder(this)
                         .setTitle("确定标记？")
-                        .setMessage("您确定要把此电话标记为诈骗电话？")
+                        .setMessage(str)
                                 // .setIcon(R.drawable.lianxiren)
                         .setPositiveButton("确定",
                                 new DialogInterface.OnClickListener() {
@@ -173,9 +185,17 @@ public class RecordPhoneDetielActivity extends Activity implements View.OnClickL
                                     @Override
                                     public void onClick(DialogInterface arg0,
                                                         int arg1) {
+                                        if(phone.getType() == 0)
+                                        {
+                                            BaseApplication.addNormalPhone(position,phone, RecordPhoneDetielActivity.this);
+                                            BaseApplication.deleteFraudlphone(-1,phone, RecordPhoneDetielActivity.this);
+                                        }
+                                        else
+                                        {
+                                            BaseApplication.addFraudPhone(position,phone,RecordPhoneDetielActivity.this);
+                                        }
 
-                                        BaseApplication.addFraudPhone(phone);
-                                        BaseApplication.deleteRecordphone(position,phone.getPhonenumber(),RecordPhoneDetielActivity.this);
+                         //               BaseApplication.deleteRecordphone(position,phone,RecordPhoneDetielActivity.this);
                                         RecordPhoneDetielActivity.this.finish();
                                     }
                                 })
@@ -194,7 +214,7 @@ public class RecordPhoneDetielActivity extends Activity implements View.OnClickL
             case R.id.delete_record:
                 alertDialog = new AlertDialog.Builder(this)
                         .setTitle("确定删除？")
-                        .setMessage("您确定删除该诈骗号码的通话记录？")
+                        .setMessage("您确定删除该号码的通话录音信息？")
                                 // .setIcon(R.drawable.lianxiren)
                         .setPositiveButton("确定",
                                 new DialogInterface.OnClickListener() {
@@ -202,7 +222,7 @@ public class RecordPhoneDetielActivity extends Activity implements View.OnClickL
                                     @Override
                                     public void onClick(DialogInterface arg0,
                                                         int arg1) {
-                                        BaseApplication.deleteRecordphone(position, phone.getPhonenumber(), RecordPhoneDetielActivity.this);
+                                        BaseApplication.deleteRecordphone(position, phone, RecordPhoneDetielActivity.this);
                                         RecordPhoneDetielActivity.this.finish();
                                     }
                                 })
@@ -219,8 +239,8 @@ public class RecordPhoneDetielActivity extends Activity implements View.OnClickL
                 break;
             case R.id.record_to_text:
                 Log.i("MscSpeechLog", "RecognizeClick() ");
-             //   RecognizeClick();
-                record_text.setText("为，一会去哪吃饭，去三号门吧，好的，一会三号门见，行");
+                RecognizeClick();
+            //    record_text.setText("为，一会去哪吃饭，去三号门吧，好的，一会三号门见，行");
             //    RecordToText.getRecognizeResult(this,"/storage/emulated/0/CallRecorder/CallRecorder.pcm",phone.getPhonenumber(),mRecognizerListener);
                 break;
             case R.id.playButton:

@@ -78,13 +78,8 @@ public class FraudSmsDetialActivity extends AppCompatActivity implements View.On
                                     @Override
                                     public void onClick(DialogInterface arg0,
                                                         int arg1) {
-                                   /*     FraudPhone fphone = new FraudPhone();
-                                        fphone.setPhonenumber(phone.getPhonenumber());
-                                        fphone.setCalltime(phone.getCalltime());
-                                        fphone.setPhonename(phone.getPhonename());
-                                        fphone.setType(0);*/
-                                        BaseApplication.addNormalSms(sms);
-                                        BaseApplication.deleteFraudSms(position, sms.getSmsid(), FraudSmsDetialActivity.this);
+                                        BaseApplication.addNormalSms(position,sms,FraudSmsDetialActivity.this);
+                                        BaseApplication.deleteFraudSms(position, sms, FraudSmsDetialActivity.this);
                                         FraudSmsDetialActivity.this.finish();
                                     }
                                 })
@@ -111,7 +106,7 @@ public class FraudSmsDetialActivity extends AppCompatActivity implements View.On
                                     @Override
                                     public void onClick(DialogInterface arg0,
                                                         int arg1) {
-                                        BaseApplication.deleteFraudSms(position,sms.getSmsid(),FraudSmsDetialActivity.this);
+                                        BaseApplication.deleteFraudSms(position,sms,FraudSmsDetialActivity.this);
                                         FraudSmsDetialActivity.this.finish();
                                     }
                                 })

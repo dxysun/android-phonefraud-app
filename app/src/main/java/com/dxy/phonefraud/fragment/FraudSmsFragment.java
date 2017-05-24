@@ -26,6 +26,8 @@ import com.dxy.phonefraud.FraudSmsDetialActivity;
 import com.dxy.phonefraud.adapter.FraudSmsAdapter;
 import com.dxy.phonefraud.entity.SmsData;
 
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -219,13 +221,25 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
                                             Boolean value = smsAdapter.getIsSelectedMap().get(i);
                                             if (value) {
                                              //   SmsReadDao.deleteOneSendSms(getActivity(),list.get(i).getId());
+                                            //    BaseApplication.deleteFraudSms(i, list.get(i), getActivity());
+                                                DataSupport.delete(SmsData.class, list.get(i).getId());
                                                 list.remove(i);
+
                                                 smsAdapter.getIsSelectedMap().put(i,
                                                         false);
                                             }
                                         }
-                                        smsAdapter.notifyDataSetChanged();
                                         alertDialog.cancel();
+                                        islong = false;
+                                        longlayout.setVisibility(View.GONE);
+                                        for (int i = 0; i < list.size(); i++) {
+                                            smsAdapter.getIsSelectedMap().put(i,
+                                                    false);
+                                            smsAdapter.getIsvisibleMap().put(i,
+                                                    CheckBox.GONE);
+                                        }
+                                        smsAdapter.initDate();
+                                        smsAdapter.notifyDataSetChanged();
                                     }
                                 })
                         .setNegativeButton("取消",
@@ -238,6 +252,7 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
                                     }
                                 }).create();
                 alertDialog.show();
+
                 break;
 
             default:
@@ -264,14 +279,13 @@ public class FraudSmsFragment extends Fragment implements AdapterView.OnItemClic
             }
         }
         else{
-
-
             Intent intent = new Intent(getActivity(), FraudSmsDetialActivity.class);
             Bundle bundle = new Bundle();
 
             SmsData sms = list.get(arg2);
 
         //    intent.putExtra("sms", sms);
+            bundle.putInt("position",arg2);
             bundle.putParcelable("sms", sms);
             intent.putExtras(bundle);
             startActivity(intent);
