@@ -185,14 +185,17 @@ public class RecordPhoneDetielActivity extends Activity implements View.OnClickL
                                     @Override
                                     public void onClick(DialogInterface arg0,
                                                         int arg1) {
+                                        phone.setListtype(2);
                                         if(phone.getType() == 0)
                                         {
+
                                             BaseApplication.addNormalPhone(position,phone, RecordPhoneDetielActivity.this);
                                             BaseApplication.deleteFraudlphone(-1,phone, RecordPhoneDetielActivity.this);
                                         }
                                         else
                                         {
                                             BaseApplication.addFraudPhone(position,phone,RecordPhoneDetielActivity.this);
+                                            BaseApplication.deleteNormalphone(-1,phone,RecordPhoneDetielActivity.this);
                                         }
 
                          //               BaseApplication.deleteRecordphone(position,phone,RecordPhoneDetielActivity.this);
@@ -418,7 +421,8 @@ public class RecordPhoneDetielActivity extends Activity implements View.OnClickL
             // Tips：
             // 错误码：10118(您没有说话)，可能是录音机权限被禁，需要提示用户打开应用的录音权限。
             // 如果使用本地功能（语记）需要提示用户开启语记的录音权限。
-            showTip(error.getPlainDescription(true));
+         //   showTip(error.getPlainDescription(true));
+            showTip("您没有说话");
         }
 
         @Override
@@ -435,6 +439,8 @@ public class RecordPhoneDetielActivity extends Activity implements View.OnClickL
             if (isLast) {
                 // TODO 最后的结果
             //    record_text.setText(s);
+                Log.d(TAG, "返回音频数据："+results);
+
             }
         }
 

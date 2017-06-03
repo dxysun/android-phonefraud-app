@@ -94,6 +94,7 @@ public class NormalPhoneDetialActivity extends Activity implements View.OnClickL
 
                                     @Override
                                     public void onClick(DialogInterface arg0, int arg1) {
+                                        phone.setListtype(1);
                                         BaseApplication.addFraudPhone(position,phone,NormalPhoneDetialActivity.this);
                                         BaseApplication.deleteNormalphone(position, phone, NormalPhoneDetialActivity.this);
                                         NormalPhoneDetialActivity.this.finish();

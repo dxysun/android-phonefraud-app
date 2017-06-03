@@ -61,6 +61,9 @@ public class BaseApplication extends Application {
 
     private static NormalSmsAdapter normalsmsAdapter;
     private static List<SmsData> normalsmslist;
+
+    private static String smspostresult;
+    private static String phonepostresult;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -100,7 +103,6 @@ public class BaseApplication extends Application {
                 "与苹果MacBook Pro笔记本电脑一台，您的验证码为【5898】，详情请登陆官方活动" +
                 "网站:www.babaac.com填写邮寄地址及时领取。注：如将个人领奖信息泄露给他人" +
                 "造成冒名领取本台概不负责。【湖南卫视】";
-
         fraudsmslist.add(new SmsData("111", "18205147449", "2017-05-08 20:58:31", content1, 0));
         fraudsmslist.add(new SmsData("110", "1069674936730", "2017-04-14 13:34:45", content, 0));*/
         List<SmsData> pl1 = DataSupport.findAll(SmsData.class);
@@ -143,7 +145,8 @@ public class BaseApplication extends Application {
     public static void setRecoredphonelist() {
         recoredphonelist = new ArrayList<>();
         List<PhoneData> plist = DataSupport.where("phonenumber = ?","67443").find(PhoneData.class);
-        if(plist.size() == 0)
+        Log.i("ListenSmsPhone", "plist.sizes  "+plist.size());
+        if(plist.isEmpty())
         {
             PhoneData  p =   new PhoneData("110","67443", "2017-05-08 22:32:34",0);
             p.setIsrecord(1);
@@ -151,17 +154,39 @@ public class BaseApplication extends Application {
             p.setListtype(3);
             p.setRecordpath("/storage/emulated/0/CallRecorder/CallRecorder.pcm");
             p.save();
+            PhoneData  p1 =   new PhoneData("111","13260812319", "2017-05-27 19:56:34",0);
+            p1.setIsrecord(1);
+            p1.setType(2);
+            p1.setListtype(3);
+            p1.setRecordpath("/storage/emulated/0/CallRecorder/PhoneCallRecorder_incoming_13260812319_1094529564.pcm");
+            p1.save();
         }
+       /* else
+        {
+            if(plist.get(0).getIsrecord() == 0)
+            {
+                ContentValues values = new ContentValues();
+                values.put("isrecord", "1");
+                DataSupport.update(PhoneData.class, values, plist.get(0).getId());
+            }
+        }*/
 
         List<PhoneData> pl1 = DataSupport.findAll(PhoneData.class);
         for(int i = 0;i < pl1.size();i ++)
         {
             PhoneData p1 = pl1.get(i);
+            Log.i("ListenSmsPhone", "plist.getIsrecord before "+p1.getIsrecord());
             if(p1.getIsrecord() == 1)
             {
+                Log.i("ListenSmsPhone", "plist.getIsrecord  "+p1.getIsrecord());
                 recoredphonelist.add(p1);
             }
         }
+        Collections.sort(recoredphonelist, new Comparator<PhoneData>() {
+            public int compare(PhoneData arg0, PhoneData arg1) {
+                return arg1.getCalltime().compareTo(arg0.getCalltime());
+            }
+        });
     }
 
     public static FraudPhoneAdapter getFraudphoneAdapter() {
@@ -220,47 +245,59 @@ public class BaseApplication extends Application {
     public static void deleteNormalphone(int position,PhoneData phone,Context context){
         if(normalphoneAdapter != null)
         {
-        //    DataSupport.delete(PhoneData.class, phone.getId());
             GetCall.DeleteCallByNumber(context,phone.getPhonenumber());
-            normalphoneAdapter.remove(position);
+        //    DataSupport.delete(PhoneData.class, phone.getId());
+            if(position == -1)       //来自录音详情界面
+            {
+                int pos = -1;
+                for(int i = 0;i < normalphonelist.size();i ++)
+                {
+                    if(phone.getPhonenumber() != null && normalphonelist.get(i).getPhonenumber().equals(phone.getPhonenumber()))
+                    {
+                        pos = i;
+                        break;
+                    }
+                }
+                if(pos != -1)
+                {
+                    normalphoneAdapter.remove(pos);
+                }
+            }
+            else
+            {
+                normalphoneAdapter.remove(position);
+            }
         }
 
     }
 
     public static void deleteFraudlphone(int position,PhoneData phone,Context context){
    //     PhoneData p = fraudphonelist.get(position);
-
-        if(fraudphoneAdapter != null && position != -1)
+        if(fraudphoneAdapter != null)
         {
-            if(phone.getIsrecord() == 1)
+            if( position != -1)          //来自诈骗电话详情界面
             {
-                for(int i = 0;i < recoredphonelist.size();i ++)
+                Log.i("NormalPhoneFragment", "deleteFraudlphone  getIsrecord " + phone.getIsrecord());
+                if(phone.getIsrecord() == 0)
                 {
-                    if(recoredphonelist.get(i).getPhonenumber().equals(phone.getPhonenumber()))
+                    DataSupport.delete(PhoneData.class, phone.getId());
+                }
+                fraudphoneAdapter.remove(position);
+            }
+            else                           //来自录音详情界面 诈骗转正常
+            {
+                int pos = -1;
+                for(int i = 0;i < fraudphonelist.size();i ++)
+                {
+                    if(fraudphonelist.get(i).getPhonenumber().equals(phone.getPhonenumber()))
                     {
-                        recordhoneAdapter.remove(i);
+                        pos = i;
                         break;
-                        //    recoredphonelist.remove(i);
                     }
                 }
+                if(pos != -1)
+                    fraudphoneAdapter.remove(pos);
             }
-
-            DataSupport.delete(PhoneData.class, phone.getId());
-            fraudphoneAdapter.remove(position);
-
-        }
-        else
-        {
-            int pos = 0;
-            for(int i = 0;i < fraudphonelist.size();i ++)
-            {
-                if(fraudphonelist.get(i).getPhonenumber().equals(phone.getPhonenumber()))
-                {
-                    pos = i;
-                    break;
-                }
-            }
-            fraudphonelist.remove(pos);
         }
 
     }
@@ -268,15 +305,36 @@ public class BaseApplication extends Application {
     public static void deleteRecordphone(int position,PhoneData phone,Context context){
     //    PhoneData p = DataSupport.find(PhoneData.class,phone.getId());
      //   phone.setIsrecord(0);
+        Log.i("NormalPhoneFragment", "deleteRecordphone  getType " + phone.getType());
         if(phone.getType() != 0)
         {
             DataSupport.delete(PhoneData.class, phone.getId());
         }
         else
         {
-            ContentValues values = new ContentValues();
-            values.put("isrecord", "0");
-            DataSupport.update(PhoneData.class, values, phone.getId());
+            int pos = -1;
+            for(int i = 0;i < fraudphonelist.size();i ++)
+            {
+                if(fraudphonelist.get(i).getPhonenumber().equals(phone.getPhonenumber()))
+                {
+                    pos = i;
+                    break;
+                }
+
+            }
+            if(pos == -1)
+            {
+                DataSupport.delete(PhoneData.class, phone.getId());
+            }
+            else
+            {
+                fraudphonelist.get(pos).setIsrecord(0);
+                recordhoneAdapter.notifyDataSetChanged();
+                ContentValues values = new ContentValues();
+                values.put("isrecord", "0");
+                DataSupport.update(PhoneData.class, values, phone.getId());
+            }
+
         }
         if(recordhoneAdapter != null)
         recordhoneAdapter.remove(position);
@@ -286,7 +344,10 @@ public class BaseApplication extends Application {
         if(normalsmsAdapter != null)
         {
         //    DataSupport.delete(SmsData.class, sms.getId());
-            SmsReadDao.deleteOneReceivedSms(context, sms.getSmsid());
+            if( sms.getSmsid() != null)
+            {
+                SmsReadDao.deleteOneReceivedSms(context, sms.getSmsid());
+            }
             normalsmsAdapter.remove(position);
         }
 
@@ -336,43 +397,48 @@ public class BaseApplication extends Application {
 
     public static void addFraudPhone(int position,PhoneData fphone,Context context){
     //    fraudphonelist.add(p);
-        fphone.setListtype(0);
+    //    fphone.setListtype(0);
         fphone.setType(0);
         Log.i("BaseApplication", "getIsrecord " + fphone.getIsrecord());
-        if(position != -1)
+        if(position != -1)     //不是来自监听到的
         {
-            if (fphone.getIsrecord() == 1 )
+            if(fphone.getListtype() == 1)     //来自正常电话详情界面
             {
-                Log.i("BaseApplication", "id " + fphone.getId());
+            //    GetCall.DeleteCallByNumber(context, fphone.getPhonenumber());
+
+                List<PhoneData> p = DataSupport.where("phonenumber = ?",fphone.getPhonenumber()).find(PhoneData.class);
+                if(p.size() > 0)
+                {
+                    PhoneData p1 = p.get(0);
+                    if(p1.getIsrecord() == 1)
+                    {
+                        for(int i = 0;i < recoredphonelist.size();i ++)
+                        {
+                            if(recoredphonelist.get(i).getPhonenumber().equals(p1.getPhonenumber()))
+                            {
+                                recoredphonelist.get(i).setType(0);
+                                recordhoneAdapter.notifyDataSetChanged();
+                                break;
+                            }
+                        }
+                    }
+                    ContentValues values = new ContentValues();
+                    values.put("type", "0");
+                    DataSupport.update(PhoneData.class, values, p1.getId());
+                }
+                else
+                {
+                    fphone.save();
+                }
+            }
+            if(fphone.getListtype() == 2)         //来自录音详情界面
+            {
                 recoredphonelist.get(position).setType(0);
                 recordhoneAdapter.notifyDataSetChanged();
-                Log.i("BaseApplication", "getType " + fphone.getType());
                 ContentValues values = new ContentValues();
                 values.put("type", "0");
                 DataSupport.update(PhoneData.class, values, fphone.getId());
-                //  normalphoneAdapter
 
-                int pos = -1;
-                for(int i = 0;i < normalphonelist.size();i ++)
-                {
-                    if(fphone.getPhonenumber() != null && normalphonelist.get(i).getPhonenumber().equals(fphone.getPhonenumber()))
-                    {
-                        pos = i;
-                        break;
-                    }
-                }
-                if(pos != -1)
-                {
-                    normalphonelist.remove(pos);
-                    normalphoneAdapter.notifyDataSetChanged();
-                }
-                GetCall.DeleteCallByNumber(context, fphone.getPhonenumber());
-                //    PhoneData p1 = DataSupport.find(PhoneData.class, fphone.getId());
-                //    Log.i("BaseApplication", "after getType " + p1.getType());
-            }
-            else
-            {
-                fphone.save();
             }
         }
         else
@@ -384,26 +450,41 @@ public class BaseApplication extends Application {
           //  fraudphoneAdapter.notifyDataSetChanged();
             fraudphoneAdapter.add(fphone);
         }
+        phonegetHttp(fphone.getPhonenumber(),0);
 
     }
     public static void addNormalPhone(int position,PhoneData phone,Context context){
         //    fraudphonelist.add(p);
       //  phone.setType(1);
-        if(position != -1)
+        if(position != -1)         //-1是来自监听到的电话
         {
             GetCall.insertCallLog(context, phone);
-            if(phone.getIsrecord() == 0)
+            Log.i("ListenSmsPhone", "getIsrecord  " + phone.getIsrecord());
+            if(phone.getIsrecord() == 1)         //该电话有录音
             {
-                DataSupport.delete(PhoneData.class, phone.getId());
-            }
-            else
-            {
-                recoredphonelist.get(position).setType(1);
-                recordhoneAdapter.notifyDataSetChanged();
+                Log.i("ListenSmsPhone", "getListtype  "+phone.getListtype());
+                if(phone.getListtype() == 0)           //来自诈骗电话详情界面
+                {
+                    for(int i = 0;i < recoredphonelist.size();i ++ )
+                    {
+                        if(recoredphonelist.get(i).getPhonenumber().equals(phone.getPhonenumber()))
+                        {
+                            recoredphonelist.get(i).setType(1);
+                            recordhoneAdapter.notifyDataSetChanged();
+                            break;
+                        }
+                    }
+                }
+                if(phone.getListtype() == 2)      //来自录音电话详情界面
+                {
+                    recoredphonelist.get(position).setType(1);
+                    recordhoneAdapter.notifyDataSetChanged();
+                }
                 ContentValues values = new ContentValues();
                 values.put("type", "1");
                 DataSupport.update(PhoneData.class, values, phone.getId());
             }
+            phonegetHttp(phone.getPhonenumber(), 1);
 
         }
 
@@ -425,7 +506,7 @@ public class BaseApplication extends Application {
         else
         {
             SmsInfo smsinfo = SmsReadDao.getLastReceivedSmsInfo(context);
-            Log.i("ListenSmsPhone", "body  "+smsinfo.getBody());
+            Log.i("ListenSmsPhone", "body  " + smsinfo.getBody());
             SmsReadDao.deleteOneReceivedSms(context, smsinfo.getId());
         }
 
@@ -436,6 +517,7 @@ public class BaseApplication extends Application {
             Log.i("ListenSmsPhone", "addFraudSms update");
             fraudsmsAdapter.add(sms);
         }
+        smspostHttp(sms.getSmscontent(),"0");
     }
     public static void addNormalSms(int position,SmsData sms,Context context){
         if(position != -1)
@@ -449,8 +531,9 @@ public class BaseApplication extends Application {
             //  fraudphoneAdapter.notifyDataSetChanged();
             normalsmsAdapter.add(sms);
         }
+        smspostHttp(sms.getSmscontent(),"1");
     }
-    public static String postHttp(String msgBody,String type){
+    public static String smspostHttp(String msgBody,String type){
         OkHttpClient okHttpClient = new OkHttpClient();
         FormBody.Builder fromBodyBuilder = new FormBody.Builder();
         RequestBody requestBody = fromBodyBuilder.add("sms", msgBody).add("type", type).build();
@@ -459,15 +542,38 @@ public class BaseApplication extends Application {
 
         Call call = okHttpClient.newCall(request);
         Log.i("ListenSmsPhone", "start  request");
-        String result = "nonetwork";
-        try {
-            Response response = call.execute();     //同步
-            result = response.body().string();
-            Log.i("ListenSmsPhone", "result  :" + result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
+        smspostresult = "nonetwork";
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
 
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                smspostresult = response.body().string();
+            }
+        });
+
+        return smspostresult;
+    }
+    public static String phonegetHttp(String phone,int type){
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(1, java.util.concurrent.TimeUnit.SECONDS)
+                .build();
+        Request.Builder requestBuilder = new Request.Builder();
+        Request request = requestBuilder.get().url("http://dxysun.com:8001/spark/testphone/?phone="+phone+"&type="+type).build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                phonepostresult = response.body().string();
+            }
+        });
+        return phonepostresult;
+    }
 }

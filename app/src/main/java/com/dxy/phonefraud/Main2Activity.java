@@ -144,8 +144,8 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         callRecord.startCallReceiver();*/
         PhoneReceive.startPhoneListen(this, new PhoneListener() {
             @Override
-            public void onIncomingCallEnded(Context context, String number, Date start, Date end,boolean isRecordStarted,String path) {
-
+            public void onIncomingCallEnded(Context context, String number, Date start, Date end,boolean isRecordStarted,String path,String result) {
+                Log.i("ListenSmsPhone", "onIncomingCallEnded，号码" + number + "时间为： " + call_time);
                 SharedPreferences pref = context.getSharedPreferences("set", context.MODE_PRIVATE);
                 Boolean b = pref.getBoolean("is_record", true);
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
@@ -153,13 +153,34 @@ public class Main2Activity extends Activity implements View.OnClickListener {
                 call_time = dateFormat.format(end);
                 record_number = number;
                 record_path = path;
-                Log.i("ListenSmsPhone", "onIncomingCallEnded，号码" + number +"时间为： "+call_time);
+
+                Log.i("ListenSmsPhone", "onIncomingCallEnded    result    " + result);
                 if(isRecordStarted && b && number != null && path != null)
                 {
-                    path = "/storage/emulated/0/CallRecorder/CallRecorder.pcm";
+                    //        path = "/storage/emulated/0/CallRecorder/CallRecorder.pcm";
                     Log.i("ListenSmsPhone", "开始识别录音 ");
                     RecordToText.getRecognizeResult(context, path, number, mRecognizerListener);
-
+                }
+                else
+                {
+                    PhoneData p = new PhoneData();
+                    p.setPhonenumber(number);
+                    p.setCalltime(call_time);
+                    if(result != null)
+                    {
+                        p.setIsrecord(0);
+                        if( !result.equals("fraud"))
+                        {
+                            p.setType(1);
+                            p.setPhonename(result);
+                            BaseApplication.addNormalPhone(-1, p, getApplicationContext());
+                        }
+                        else
+                        {
+                            p.setType(0);
+                            BaseApplication.addFraudPhone(-1, p, getApplicationContext());
+                        }
+                    }
                 }
             }
 
@@ -172,6 +193,30 @@ public class Main2Activity extends Activity implements View.OnClickListener {
             public void onIncomingCallReceived(Context context, String number, Date start) {
                 Log.i("ListenSmsPhone", "onIncomingCallReceived，号码" + number );
             }
+            @Override
+            public void onMissedCall(Context context, String number, Date start,String result)
+            {
+                Log.i("ListenSmsPhone", "onMissedCall，号码" + number +"result  "+result);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+                call_time = dateFormat.format(start);
+                PhoneData p = new PhoneData();
+                p.setPhonenumber(number);
+                p.setCalltime(call_time);
+                if(result != null)
+                {
+                    p.setIsrecord(0);
+                    if( result.equals("fraud"))
+                    {
+                        p.setType(0);
+                        BaseApplication.addFraudPhone(-1, p, getApplicationContext());
+                    }
+                    if(result.equals("notknown"))
+                    {
+                        p.setType(1);
+                        BaseApplication.addNormalPhone(-1, p, getApplicationContext());
+                    }
+                }
+            }
         });
         SmsRadar.initializeSmsRadarService(this, new SmsListener() {
             @Override
@@ -179,8 +224,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
             }
 
             @Override
-            public void onSmsReceived(Sms sms) {
-                Log.i("ListenSmsPhone", " " + sms.getMsg() + "  " + sms.getDate() + "  " + sms.getAddress() + "  " + sms.getType());
+            public void onSmsReceived(Sms sms) {    //监听接收到短信
                 smsbody = sms.getMsg();
                 try {
                     Thread t = new Thread(new Runnable() {
@@ -216,7 +260,9 @@ public class Main2Activity extends Activity implements View.OnClickListener {
                     }
                     BaseApplication.addNormalSms(-1,sdata, getApplicationContext());
                     //Toast.makeText(Main2Activity.this, "观察者 接收到正常短信", Toast.LENGTH_LONG).show();
-                } else {
+                }
+                else
+                {
                     Toast.makeText(Main2Activity.this, "您接收到诈骗短信，请注意防范短信诈骗", Toast.LENGTH_LONG).show();
                     Log.i("ListenSmsPhone", "addFraudSms ");
                     BaseApplication.addFraudSms(-1, sdata, getApplicationContext());
@@ -338,7 +384,8 @@ public class Main2Activity extends Activity implements View.OnClickListener {
             // Tips：
             // 错误码：10118(您没有说话)，可能是录音机权限被禁，需要提示用户打开应用的录音权限。
             // 如果使用本地功能（语记）需要提示用户开启语记的录音权限。
-            //    showTip(error.getPlainDescription(true));
+         //   showTip(error.getPlainDescription(true));
+            Toast.makeText(getApplicationContext(), "刚才的通话中您没有说话", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -365,7 +412,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
                     Thread t = new Thread(new Runnable(){
                         @Override
                         public void run() {
-                            phone_result = phonepostHttp(record_result, "0");
+                            phone_result = phonepostHttp(record_result);
                         }
                     });
                     t.start();
@@ -374,7 +421,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
                 catch (Exception e){
                     e.printStackTrace();
                 }
-                if(phone_result.equals("ok"))
+                if(phone_result.equals("normal"))
                 {
                     //   BaseApplication.addNormalSms(sdata);
                     Log.i("ListenSmsPhone", "识别结束 结果为正常 ");
@@ -393,6 +440,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
                     String contentTitle = "您刚刚接听的电话含有诈骗内容，请注意防范电话诈骗";
                     int id = 1;
                     pdata.setType(0);
+                    GetCall.DeleteCallByNumber(getApplicationContext(), pdata.getPhonenumber());
                     BaseApplication.addFraudPhone(-1,pdata,getApplicationContext());
                     setNotification(Ticker, title, contentTitle, phoneResultIntent, id);
                 }
@@ -440,12 +488,12 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         //      record_text.setText(resultBuffer.toString());
         //    mResultText.setSelection(mResultText.length());
     }
-    public String phonepostHttp(String msgBody,String type){
+    public String phonepostHttp(String phone){
         OkHttpClient okHttpClient = new OkHttpClient();
         FormBody.Builder fromBodyBuilder = new FormBody.Builder();
-        RequestBody requestBody = fromBodyBuilder.add("sms", msgBody).add("type", type).build();
+        RequestBody requestBody = fromBodyBuilder.add("phonecontent", phone).build();
         Request.Builder requestBuilder = new Request.Builder();
-        Request request = requestBuilder.url("http://dxysun.com:8001/spark/testsms/").post(requestBody).build();
+        Request request = requestBuilder.url("http://dxysun.com:8001/spark/phonecontent/").post(requestBody).build();
 
         Call call = okHttpClient.newCall(request);
 

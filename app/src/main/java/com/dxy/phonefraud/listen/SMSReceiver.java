@@ -51,7 +51,7 @@ public class SMSReceiver extends BroadcastReceiver {
                         @Override
                         public void run() {
                           //  result = getHttp(smsbody,"1");
-                            result = BaseApplication.postHttp(smsbody,"0");
+                            result = BaseApplication.smspostHttp(smsbody,"0");
                         }
                     });
                     t.start();

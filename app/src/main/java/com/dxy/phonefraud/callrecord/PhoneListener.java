@@ -9,7 +9,8 @@ import java.util.Date;
  */
 public interface PhoneListener {
 
-    public void onIncomingCallEnded(Context context, String number, Date start, Date end,boolean isRecordStarted,String path);
+    public void onIncomingCallEnded(Context context, String number, Date start, Date end,boolean isRecordStarted,String path,String result);
     public void onIncomingCallAnswered(Context context, String number, Date start);
     public void onIncomingCallReceived(Context context, String number, Date start);
+    public void onMissedCall(Context context, String number, Date start,String result);
 }

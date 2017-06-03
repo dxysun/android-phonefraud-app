@@ -82,8 +82,6 @@ public class RecordPhoneFragment extends Fragment implements AdapterView.OnItemC
             phoneAdapter = new RecordPhoneAdapter(getActivity(),list);
             BaseApplication.setRecordhoneAdapter(phoneAdapter);
             lv.setAdapter(phoneAdapter);
-
-
         }
      /*   for (int i = 0; i < 20; i++) {
             list.add(new PhoneData("110","888888" + i, "王五", "2017-04-"+ i,2));

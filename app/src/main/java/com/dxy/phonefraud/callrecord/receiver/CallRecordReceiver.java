@@ -120,6 +120,7 @@ public class CallRecordReceiver extends PhoneCallReceiver {
             {
                 Log.i(TAG,"network   off" );
                 isRecordStarted = true;
+                CustomTimeToast(context.getApplicationContext(), "无法联网，已开启通话录音", 40 * 1000);
             }
             else
             {
@@ -129,7 +130,7 @@ public class CallRecordReceiver extends PhoneCallReceiver {
                     Thread t = new Thread(new Runnable(){
                         @Override
                         public void run() {
-                            result = getHttp("http://dxysun.com:8001/spark/testphone/?phone="+phonenumber+"&type=1");
+                            result = getHttp("http://dxysun.com:8001/spark/phone/?phone="+phonenumber);
                         }
                     });
                     t.start();
@@ -138,21 +139,25 @@ public class CallRecordReceiver extends PhoneCallReceiver {
                 catch (Exception e){
                     e.printStackTrace();
                 }
-                if(result.equals("ok") && b)
+                if(result.equals("notknown") && b)
                 {
                     Log.i(TAG, "RINGING  :" + "result ok");
                     isRecordStarted = true;
-                    CustomTimeToast(context.getApplicationContext(), "未知状态的陌生电话，已开启通话录音", 5 * 1000);
+                    CustomTimeToast(context.getApplicationContext(), "未知状态的陌生电话，已开启通话录音", 40 * 1000);
                 //    Toast.makeText(context.getApplicationContext(), "未知状态的陌生电话，已开启通话录音", Toast.LENGTH_LONG).show();
                 }
-                if(result.equals("notok"))
+                if(result.equals("fraud"))
                 {
                     Log.i(TAG, "RINGING :" + "result get not ok");
                     //  Toast.makeText(context.getApplicationContext(), "诈骗电话，请及时挂断", Toast.LENGTH_LONG).show();
-                    CustomTimeToast(context.getApplicationContext(), "诈骗电话，请及时挂断", 30 * 1000);
+                    CustomTimeToast(context.getApplicationContext(), "诈骗电话，请及时挂断", 40 * 1000);
                 }
                 Log.i(TAG, "RINGING :" + phonenumber);
             }
+        }
+        else
+        {
+            result = name;
         }
 
     }
@@ -189,19 +194,28 @@ public class CallRecordReceiver extends PhoneCallReceiver {
 
     @Override
     protected void onIncomingCallEnded(Context context, String number, Date start, Date end) {
+        Log.i("ListenSmsPhone", "before onIncomingCallEnded    result    " + result);
+
         stopRecord(context);
-        cancelToast();
-        String path = audiofile.getAbsolutePath();
+        String path = null;
+        if(audiofile != null)
+        {
+             path = audiofile.getAbsolutePath();
+        }
+        Log.i("ListenSmsPhone", "phoneListener onIncomingCallEnded    " + result);
+        PhoneReceive.phoneListener.onIncomingCallEnded(context, phonenumber, start, end, isRecordStarted, path, result);
         if(number == null)
         {
             number = phonenumber;
-            Log.i(TAG,"onIncomingCallAnswered:" +phonenumber );
+            Log.i("ListenSmsPhone","onIncomingCallEnded:" +phonenumber );
         }
         else
         {
-            Log.i(TAG,"onIncomingCallAnswered " + number);
+            Log.i("ListenSmsPhone","onIncomingCallEnded " + number);
         }
-        PhoneReceive.phoneListener.onIncomingCallEnded(context,number,start,end,isRecordStarted,path);
+        cancelToast();
+
+
     }
 
     @Override
@@ -239,6 +253,7 @@ public class CallRecordReceiver extends PhoneCallReceiver {
     @Override
     protected void onMissedCall(Context context, String number, Date start) {
         cancelToast();
+        PhoneReceive.phoneListener.onMissedCall(context,phonenumber,start,result);
     }
 
     // Derived classes could override these to respond to specific events of interest
