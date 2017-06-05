@@ -132,16 +132,6 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         });
         t.start();
 
-/*
-        callRecord = new CallRecord.Builder(this)
-                .setRecordFileName("PhoneCallRecorder")
-                .setRecordDirName("CallRecorder")
-                .setShowSeed(true)
-                .build();
-
-        callRecord.changeReceiver(new MyCallRecordReceiver(callRecord));
-        callRecord.enableSaveFile();
-        callRecord.startCallReceiver();*/
         PhoneReceive.startPhoneListen(this, new PhoneListener() {
             @Override
             public void onIncomingCallEnded(Context context, String number, Date start, Date end,boolean isRecordStarted,String path,String result) {
@@ -327,7 +317,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         FormBody.Builder fromBodyBuilder = new FormBody.Builder();
         RequestBody requestBody = fromBodyBuilder.add("sms", msgBody).build();
         Request.Builder requestBuilder = new Request.Builder();
-        Request request = requestBuilder.url("http://dxysun.com:8001/spark/sms/").post(requestBody).build();
+        Request request = requestBuilder.url("http://dxysun.com/spark/sms/").post(requestBody).build();
 
         Call call = okHttpClient.newCall(request);
 
@@ -493,7 +483,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         FormBody.Builder fromBodyBuilder = new FormBody.Builder();
         RequestBody requestBody = fromBodyBuilder.add("phonecontent", phone).build();
         Request.Builder requestBuilder = new Request.Builder();
-        Request request = requestBuilder.url("http://dxysun.com:8001/spark/phonecontent/").post(requestBody).build();
+        Request request = requestBuilder.url("http://dxysun.com/spark/phonecontent/").post(requestBody).build();
 
         Call call = okHttpClient.newCall(request);
 

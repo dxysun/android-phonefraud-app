@@ -161,15 +161,7 @@ public class BaseApplication extends Application {
             p1.setRecordpath("/storage/emulated/0/CallRecorder/PhoneCallRecorder_incoming_13260812319_1094529564.pcm");
             p1.save();
         }
-       /* else
-        {
-            if(plist.get(0).getIsrecord() == 0)
-            {
-                ContentValues values = new ContentValues();
-                values.put("isrecord", "1");
-                DataSupport.update(PhoneData.class, values, plist.get(0).getId());
-            }
-        }*/
+
 
         List<PhoneData> pl1 = DataSupport.findAll(PhoneData.class);
         for(int i = 0;i < pl1.size();i ++)
@@ -213,12 +205,7 @@ public class BaseApplication extends Application {
     public static void  setFraudphonelist() {
 
         fraudphonelist = new ArrayList<>();
-    /*    PhoneData phone = new PhoneData();
-        phone.setPhonenumber("18631266315");
-        phone.setCalltime("2017-04-09 15:22:45");
-        phone.setType(0);
-        phone.setIsrecord(0);
-        fraudphonelist.add(phone);*/
+
         List<PhoneData> pl1 = DataSupport.findAll(PhoneData.class);
         for(int i = 0;i < pl1.size();i ++)
         {
@@ -538,7 +525,7 @@ public class BaseApplication extends Application {
         FormBody.Builder fromBodyBuilder = new FormBody.Builder();
         RequestBody requestBody = fromBodyBuilder.add("sms", msgBody).add("type", type).build();
         Request.Builder requestBuilder = new Request.Builder();
-        Request request = requestBuilder.url("http://dxysun.com:8001/spark/testsms/").post(requestBody).build();
+        Request request = requestBuilder.url("http://dxysun.com/spark/testsms/").post(requestBody).build();
 
         Call call = okHttpClient.newCall(request);
         Log.i("ListenSmsPhone", "start  request");
@@ -562,7 +549,7 @@ public class BaseApplication extends Application {
                 .connectTimeout(1, java.util.concurrent.TimeUnit.SECONDS)
                 .build();
         Request.Builder requestBuilder = new Request.Builder();
-        Request request = requestBuilder.get().url("http://dxysun.com:8001/spark/testphone/?phone="+phone+"&type="+type).build();
+        Request request = requestBuilder.get().url("http://dxysun.com/spark/testphone/?phone="+phone+"&type="+type).build();
         Call call = okHttpClient.newCall(request);
         call.enqueue(new Callback() {
             @Override

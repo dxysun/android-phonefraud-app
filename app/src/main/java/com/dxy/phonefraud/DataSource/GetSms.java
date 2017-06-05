@@ -74,8 +74,6 @@ public class GetSms {
                             sms.setSmsname(name);
                        smslist.add(sms);
                     }
-
-
          /*           smsBuilder.append("[ ");
                     smsBuilder.append(strAddress + ", ");
                     smsBuilder.append(intPerson + ", ");

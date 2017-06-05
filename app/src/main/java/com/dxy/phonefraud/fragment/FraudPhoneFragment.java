@@ -94,13 +94,8 @@ public class FraudPhoneFragment extends Fragment implements AdapterView.OnItemCl
      /*   for (int i = 0; i < 10; i++) {
             list.add(new PhoneData("110","999999" + i, "张三", "2017-04-"+ i,0));
         }*/
-
-
-
-
         lv.setOnItemClickListener(this);
         lv.setOnItemLongClickListener(this);
-
     }
 
     @Override
@@ -228,6 +223,7 @@ public class FraudPhoneFragment extends Fragment implements AdapterView.OnItemCl
         }
 
     }
+
     //ListView的长按事件
     @Override
     public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,

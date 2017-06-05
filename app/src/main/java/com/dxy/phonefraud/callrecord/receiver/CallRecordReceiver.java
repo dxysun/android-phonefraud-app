@@ -130,7 +130,7 @@ public class CallRecordReceiver extends PhoneCallReceiver {
                     Thread t = new Thread(new Runnable(){
                         @Override
                         public void run() {
-                            result = getHttp("http://dxysun.com:8001/spark/phone/?phone="+phonenumber);
+                            result = getHttp("http://dxysun.com/spark/phone/?phone="+phonenumber);
                         }
                     });
                     t.start();
@@ -414,7 +414,6 @@ public class CallRecordReceiver extends PhoneCallReceiver {
                 while (isRecording) {
                     int bufferReadResult = audioRecord.read(buffer, 0, bufferSize);
                     for (int i = 0; i < bufferReadResult; i++) {
-
                         short s = LowToShort(buffer[i]);
                         dos.writeShort(s);
                     }

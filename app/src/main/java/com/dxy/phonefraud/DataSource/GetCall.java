@@ -91,8 +91,8 @@ public class GetCall {
             e.printStackTrace();
         }
         return phonelist;
-
     }
+
     static public HashMap<String,ArrayList<PhoneData>> GetCallsInPhoneBymap(Context context ) {
         phonelist = new ArrayList<>();
         phonemap = new HashMap<>();
