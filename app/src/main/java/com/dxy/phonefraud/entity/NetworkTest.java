@@ -72,7 +72,7 @@ public class NetworkTest {
 
         try {
 
-            String connectionurl = "http://dxysun.com:8001/spark/testphone/?phone=123456";
+            String connectionurl = "https://lucfzy.com/spark/testphone/?phone=123456";
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(2, java.util.concurrent.TimeUnit.SECONDS)
                     .build();
@@ -89,38 +89,7 @@ public class NetworkTest {
         }
         return false;
     }
-    public static  boolean ping() {
 
-        String result = null;
-        try {
-            String ip = "www.dxysun.com";// ping 的地址，可以换成任何一种可靠的外网
-            Process p = Runtime.getRuntime().exec("ping -c 2 -w 100 " + ip);// ping网址3次
-            // 读取ping的内容，可以不加
-        /*    InputStream input = p.getInputStream();
-            BufferedReader in = new BufferedReader(new InputStreamReader(input));
-            StringBuffer stringBuffer = new StringBuffer();
-            String content = "";
-            while ((content = in.readLine()) != null) {
-                stringBuffer.append(content);
-            }
-            Log.d("------ping-----", "result content : " + stringBuffer.toString());*/
-            // ping的状态
-            int status = p.waitFor();
-            if (status == 0) {
-                result = "success";
-                return true;
-            } else {
-                result = "failed";
-            }
-        } catch (IOException e) {
-            result = "IOException";
-        } catch (InterruptedException e) {
-            result = "InterruptedException";
-        } finally {
-            Log.i("CallRecord", "----result---" + "result = " + result);
-        }
-        return false;
-    }
     public static int getNetWorkClass(Context context) {
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 

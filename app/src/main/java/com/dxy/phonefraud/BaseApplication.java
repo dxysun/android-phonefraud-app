@@ -525,7 +525,7 @@ public class BaseApplication extends Application {
         FormBody.Builder fromBodyBuilder = new FormBody.Builder();
         RequestBody requestBody = fromBodyBuilder.add("sms", msgBody).add("type", type).build();
         Request.Builder requestBuilder = new Request.Builder();
-        Request request = requestBuilder.url("http://dxysun.com/spark/testsms/").post(requestBody).build();
+        Request request = requestBuilder.url("https://lucfzy.com/spark/testsms/").post(requestBody).build();
 
         Call call = okHttpClient.newCall(request);
         Log.i("ListenSmsPhone", "start  request");
@@ -549,7 +549,7 @@ public class BaseApplication extends Application {
                 .connectTimeout(1, java.util.concurrent.TimeUnit.SECONDS)
                 .build();
         Request.Builder requestBuilder = new Request.Builder();
-        Request request = requestBuilder.get().url("http://dxysun.com/spark/testphone/?phone="+phone+"&type="+type).build();
+        Request request = requestBuilder.get().url("https://lucfzy.com/spark/testphone/?phone="+phone+"&type="+type).build();
         Call call = okHttpClient.newCall(request);
         call.enqueue(new Callback() {
             @Override

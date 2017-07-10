@@ -317,7 +317,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         FormBody.Builder fromBodyBuilder = new FormBody.Builder();
         RequestBody requestBody = fromBodyBuilder.add("sms", msgBody).build();
         Request.Builder requestBuilder = new Request.Builder();
-        Request request = requestBuilder.url("http://dxysun.com/spark/sms/").post(requestBody).build();
+        Request request = requestBuilder.url("https://lucfzy.com/spark/sms/").post(requestBody).build();
 
         Call call = okHttpClient.newCall(request);
 
@@ -483,7 +483,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         FormBody.Builder fromBodyBuilder = new FormBody.Builder();
         RequestBody requestBody = fromBodyBuilder.add("phonecontent", phone).build();
         Request.Builder requestBuilder = new Request.Builder();
-        Request request = requestBuilder.url("http://dxysun.com/spark/phonecontent/").post(requestBody).build();
+        Request request = requestBuilder.url("https://lucfzy.com/spark/phonecontent/").post(requestBody).build();
 
         Call call = okHttpClient.newCall(request);
 

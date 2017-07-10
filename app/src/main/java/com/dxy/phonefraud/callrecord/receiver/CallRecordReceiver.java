@@ -130,7 +130,7 @@ public class CallRecordReceiver extends PhoneCallReceiver {
                     Thread t = new Thread(new Runnable(){
                         @Override
                         public void run() {
-                            result = getHttp("http://dxysun.com/spark/phone/?phone="+phonenumber);
+                            result = getHttp("https://lucfzy.com/spark/phone/?phone="+phonenumber);
                         }
                     });
                     t.start();

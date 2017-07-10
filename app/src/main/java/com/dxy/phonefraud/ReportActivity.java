@@ -73,7 +73,7 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
                 .connectTimeout(1, java.util.concurrent.TimeUnit.SECONDS)
                 .build();
         Request.Builder requestBuilder = new Request.Builder();
-        Request request = requestBuilder.get().url("http://dxysun.com:8001/spark/testphone/?phone="+phone+"&type="+type).build();
+        Request request = requestBuilder.get().url("https://lucfzy.com/spark/testphone/?phone="+phone+"&type="+type).build();
         Call call = okHttpClient.newCall(request);
         call.enqueue(new Callback() {
             @Override
