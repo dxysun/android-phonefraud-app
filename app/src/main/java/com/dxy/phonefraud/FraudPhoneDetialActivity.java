@@ -1,5 +1,6 @@
 package com.dxy.phonefraud;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -14,7 +15,7 @@ import android.widget.TextView;
 import com.dxy.phonefraud.adapter.PhoneAdapter;
 import com.dxy.phonefraud.entity.PhoneData;
 
-public class FraudPhoneDetialActivity extends AppCompatActivity implements View.OnClickListener{
+public class FraudPhoneDetialActivity extends Activity implements View.OnClickListener{
 
     private PhoneData phone;
     private TextView fraud_info;

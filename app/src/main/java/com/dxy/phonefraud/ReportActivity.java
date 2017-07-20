@@ -1,5 +1,6 @@
 package com.dxy.phonefraud;
 
+import android.app.Activity;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +22,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class ReportActivity extends AppCompatActivity implements View.OnClickListener{
+public class ReportActivity extends Activity implements View.OnClickListener{
     private ImageView iv_back;
     private EditText editFraudPhone;
     private Button reportButton;

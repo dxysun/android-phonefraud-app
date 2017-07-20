@@ -216,6 +216,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
             @Override
             public void onSmsReceived(Sms sms) {    //监听接收到短信
                 smsbody = sms.getMsg();
+                Log.i("ListenSmsPhone", "smsbody    "+smsbody);
                 try {
                     Thread t = new Thread(new Runnable() {
                         @Override
@@ -228,6 +229,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                Log.i("ListenSmsPhone", "after   smsbody");
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
                 Date d = new Date(Long.parseLong(sms.getDate()));
                 String date = dateFormat.format(d);
