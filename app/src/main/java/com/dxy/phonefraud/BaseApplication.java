@@ -509,7 +509,9 @@ public class BaseApplication extends Application {
     public static void addNormalSms(int position,SmsData sms,Context context){
         if(position != -1)
         {
-            SmsReadDao.insertSms(context, sms);
+            SmsInfo sm = SmsReadDao.insertSms(context, sms);
+            Log.i("ListenSmsPhone", "addNormalSms insert " + sm.getId()+"    "+sm.getBody());
+            sms.setSmsid(sm.getId());
         }
        // sms.setType(1);
     //    SmsReadDao.deleteLastSms(context, sms.getSmsid());

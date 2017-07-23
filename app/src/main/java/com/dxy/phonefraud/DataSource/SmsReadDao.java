@@ -95,7 +95,7 @@ public class SmsReadDao {
         return false;
     }
 
-     public static void insertSms(Context context,SmsData sdata)
+     public static SmsInfo insertSms(Context context,SmsData sdata)
     {
         ContentResolver cr = context.getContentResolver();
         ContentValues cv = new ContentValues();
@@ -112,6 +112,9 @@ public class SmsReadDao {
         }
         cv.put("date", time);
         cr.insert(Uri.parse("content://sms"), cv);
+//        getLastSmsInfo();
+        SmsInfo s = getLastReceivedSmsInfo(context);
+        return s;
     }
 
     /**

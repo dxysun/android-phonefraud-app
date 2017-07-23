@@ -31,7 +31,9 @@ import android.widget.Toast;
 
 import com.dxy.phonefraud.DataSource.CallLogObserver;
 import com.dxy.phonefraud.DataSource.GetCall;
+import com.dxy.phonefraud.DataSource.SmsInfo;
 import com.dxy.phonefraud.DataSource.SmsObserver;
+import com.dxy.phonefraud.DataSource.SmsReadDao;
 import com.dxy.phonefraud.callrecord.CallRecord;
 import com.dxy.phonefraud.callrecord.MyCallRecordReceiver;
 import com.dxy.phonefraud.callrecord.PhoneListener;
@@ -215,6 +217,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
 
             @Override
             public void onSmsReceived(Sms sms) {    //监听接收到短信
+                SmsInfo smsinfo = SmsReadDao.getLastReceivedSmsInfo(Main2Activity.this);
                 smsbody = sms.getMsg();
                 Log.i("ListenSmsPhone", "smsbody    "+smsbody);
                 try {
@@ -233,7 +236,9 @@ public class Main2Activity extends Activity implements View.OnClickListener {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
                 Date d = new Date(Long.parseLong(sms.getDate()));
                 String date = dateFormat.format(d);
+
                 SmsData sdata = new SmsData();
+                sdata.setSmsid(smsinfo.getId());
                 sdata.setSmstime(date);
                 sdata.setSmscontent(sms.getMsg());
                 String number = sms.getAddress();
