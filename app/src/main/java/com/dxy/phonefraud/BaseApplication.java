@@ -1,5 +1,6 @@
 package com.dxy.phonefraud;
 
+import android.Manifest;
 import android.app.Application;
 import android.content.ContentValues;
 import android.content.Context;
@@ -64,19 +65,27 @@ public class BaseApplication extends Application {
 
     private static String smspostresult;
     private static String phonepostresult;
+    private static Context context;
     @Override
     public void onCreate() {
         super.onCreate();
         LitePal.initialize(this);
         SpeechUtility.createUtility(BaseApplication.this, "appid=" + getString(R.string.app_id));
     }
+
+    public static void setContext(Context con)
+    {
+        context = con;
+
+    }
     public static List<SmsData> getNormalsmslist() {
         return normalsmslist;
     }
 
-    public static void setNormalsmslist(Context context) {
+    public static void setNormalsmslist(final Context context) {
 
         normalsmslist = GetSms.getSmsInPhone(context);
+
 
     }
 
@@ -144,7 +153,7 @@ public class BaseApplication extends Application {
 
     public static void setRecoredphonelist() {
         recoredphonelist = new ArrayList<>();
-        List<PhoneData> plist = DataSupport.where("phonenumber = ?","67443").find(PhoneData.class);
+      /*  List<PhoneData> plist = DataSupport.where("phonenumber = ?","67443").find(PhoneData.class);
         Log.i("ListenSmsPhone", "plist.sizes  "+plist.size());
         if(plist.isEmpty())
         {
@@ -160,7 +169,7 @@ public class BaseApplication extends Application {
             p1.setListtype(3);
             p1.setRecordpath("/storage/emulated/0/CallRecorder/PhoneCallRecorder_incoming_13260812319_1094529564.pcm");
             p1.save();
-        }
+        }*/
 
 
         List<PhoneData> pl1 = DataSupport.findAll(PhoneData.class);
@@ -351,8 +360,7 @@ public class BaseApplication extends Application {
         Log.i("NormalPhoneFragment", "set  list phonemap ");
         normalphonelist = new ArrayList<>();
         normalphonemap = GetCall.GetCallsInPhoneBymap(context);
-
-        List<Map.Entry<String,ArrayList<PhoneData>>> listtemp = new ArrayList<>(normalphonemap.entrySet());
+        List<Map.Entry<String, ArrayList<PhoneData>>> listtemp = new ArrayList<>(normalphonemap.entrySet());
         Collections.sort(listtemp, new Comparator<Map.Entry<String, ArrayList<PhoneData>>>() {
             //降序排序
             @Override
@@ -363,12 +371,11 @@ public class BaseApplication extends Application {
             }
         });
         normalphonemap.clear();
-        for(Map.Entry<String, ArrayList<PhoneData>> entry : listtemp){
+        for (Map.Entry<String, ArrayList<PhoneData>> entry : listtemp) {
             normalphonemap.put(entry.getKey(), entry.getValue());
             PhoneData p = entry.getValue().get(0);
             normalphonelist.add(p);
         }
-
     }
 
    public static void addRecordPhone(int position,PhoneData fphone,Context context)

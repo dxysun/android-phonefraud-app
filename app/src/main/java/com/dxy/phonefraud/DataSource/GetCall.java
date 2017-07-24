@@ -36,7 +36,7 @@ public class GetCall {
         phonemap = new HashMap<>();
         String result = null;
 
-    //    Cursor cursor = null;
+        //    Cursor cursor = null;
         try {
             Cursor cursor = context.getContentResolver().query(
                     CallLog.Calls.CONTENT_URI,
@@ -112,7 +112,7 @@ public class GetCall {
             while (hasRecord) {
                 String id = cursor.getString(cursor.getColumnIndex(CallLog.Calls._ID));
                 int type = cursor.getInt(cursor.getColumnIndex(CallLog.Calls.TYPE));
-    //            long duration = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DURATION));
+                //            long duration = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DURATION));
                 strPhone = cursor.getString(cursor.getColumnIndex(CallLog.Calls.NUMBER));
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
                 Date d = new Date(Long.parseLong(cursor.getString(cursor.getColumnIndex(CallLog.Calls.DATE))));
@@ -264,7 +264,7 @@ public class GetCall {
     static public void DeleteCallByNumber(Context context,String number)
     {
         try{
-              context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, CallLog.Calls.NUMBER+"=?" , new String[]{number});
+            context.getContentResolver().delete(CallLog.Calls.CONTENT_URI, CallLog.Calls.NUMBER+"=?" , new String[]{number});
         }
         catch (SecurityException ex){
             ex.printStackTrace();

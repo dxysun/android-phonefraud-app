@@ -1,12 +1,16 @@
 package com.dxy.phonefraud.DataSource;
 
+import android.Manifest;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
+import android.provider.CallLog;
 import android.util.Log;
 
+import com.dxy.phonefraud.entity.PhoneData;
 import com.dxy.phonefraud.entity.SmsData;
+
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,16 +24,19 @@ import java.util.Locale;
 public class GetSms {
 
     static private List<SmsData> smslist;
+    static String SMS_URI_ALL = "content://sms/";
+    static StringBuilder smsBuilder;
+
     /**
      * 获取所有短信
      *
      * @return
      */
-    static public List<SmsData> getSmsInPhone(Context context) {
+    static public List<SmsData> getSmsInPhone(final Context context) {
         smslist = new ArrayList<>();
-        final String SMS_URI_ALL = "content://sms/";
 
-        StringBuilder smsBuilder = new StringBuilder();
+
+      smsBuilder = new StringBuilder();
 
         try {
             Uri uri = Uri.parse(SMS_URI_ALL);
@@ -72,7 +79,7 @@ public class GetSms {
                         String name = GetCall.queryNameFromContactsByNumber(context,strAddress.substring(3));
                         if(name != null)
                             sms.setSmsname(name);
-                       smslist.add(sms);
+                        smslist.add(sms);
                     }
          /*           smsBuilder.append("[ ");
                     smsBuilder.append(strAddress + ", ");
@@ -95,6 +102,7 @@ public class GetSms {
         } catch (SQLiteException ex) {
             Log.d("SQLiteExce SmsInPhone", ex.getMessage());
         }
+
         return smslist;
      //   return smsBuilder.toString();
     }

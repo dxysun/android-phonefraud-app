@@ -1,5 +1,6 @@
 package com.dxy.phonefraud;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
@@ -19,6 +21,8 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.CallLog;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
@@ -96,7 +100,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
     private String call_time;
     private String record_number;
     private String record_path;
-
+    private  static String[] PERMISSIONS = new String[]{Manifest.permission.READ_CALL_LOG,Manifest.permission.READ_CONTACTS,Manifest.permission.READ_SMS,Manifest.permission.WRITE_CALL_LOG,Manifest.permission.RECORD_AUDIO};
     private  static Toast toast = null;
     private  static Timer timer = null;
     private  static Timer time1 = null;
@@ -110,7 +114,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
         iv_setting.setOnClickListener(this);
         phone_fraud.setOnClickListener(this);
         sms_fraud.setOnClickListener(this);
-
+        initPermission();
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         /*
@@ -121,7 +125,7 @@ public class Main2Activity extends Activity implements View.OnClickListener {
 
         Intent intentphone = new Intent(this, PhoneActivity.class);
         phoneResultIntent = PendingIntent.getActivity(this, 1, intentphone, 0);
-
+        BaseApplication.setContext(Main2Activity.this);
         Thread t = new Thread(new Runnable(){
             @Override
             public void run() {
@@ -282,6 +286,36 @@ public class Main2Activity extends Activity implements View.OnClickListener {
  /*        callLogObserver = new CallLogObserver(mHandler, this);
         getContentResolver().registerContentObserver(CallLog.Calls.CONTENT_URI, true, callLogObserver);//等价于【Uri.parse("content://call_log/calls")】
 */
+    }
+    private void initPermission() {
+        int permission = ContextCompat.checkSelfPermission(Main2Activity.this, Manifest.permission.READ_CALL_LOG);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            //需不需要解释的dialog
+            if (shouldRequest()) return;
+            //请求权限
+            ActivityCompat.requestPermissions(Main2Activity.this,PERMISSIONS, 1);
+        }
+    }
+    private boolean shouldRequest() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_CALL_LOG)) {
+            //显示一个对话框，给用户解释
+            explainDialog();
+            return true;
+        }
+        return false;
+    }
+    private void explainDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("应用需要获取您的权限,是否授权？")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //请求权限
+                        ActivityCompat.requestPermissions(Main2Activity.this, PERMISSIONS, 1);
+                    }
+                }).setNegativeButton("取消", null)
+                .create().show();
     }
     private void showSmsToast(Sms sms) {
         Toast.makeText(this, sms.toString(), Toast.LENGTH_LONG).show();
